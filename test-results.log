@@ -1,0 +1,237 @@
+[dotenv@17.2.3] injecting env (24) from .env -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+[34m📝 Loaded existing test wallet: 782UEzXBapVq1zB8pWdrjm5YE24LR1Am7SGoZcof3oeJ[0m
+[35m
+🧪 End-to-End Payment & Generation Test Suite
+[0m
+[34mTest Wallet: 782UEzXBapVq1zB8pWdrjm5YE24LR1Am7SGoZcof3oeJ[0m
+[34mTreasury Wallet: CS4y3Ee2ZaXuwHheWgZ9Mosd2EGx1RfKqVGiAnnJ58XB[0m
+[34mAPI Base: http://localhost:3003
+[0m
+[32m✓ Dev server is running
+[0m
+
+======================================================================
+[36m[1mTesting Starter Tier - $1.1 SOL[0m
+======================================================================
+[36m
+1️⃣  Checking wallet balance...[0m
+[33m💰 Balance too low (0.099985 SOL). Requesting airdrop...[0m
+Server responded with 429 Too Many Requests.  Retrying after 500ms delay...
+Server responded with 429 Too Many Requests.  Retrying after 1000ms delay...
+Server responded with 429 Too Many Requests.  Retrying after 2000ms delay...
+Server responded with 429 Too Many Requests.  Retrying after 4000ms delay...
+[31m✗ Airdrop failed: 429 Too Many Requests:  {"jsonrpc":"2.0","error":{"code": 429, "message":"You've either reached your airdrop limit today or the airdrop faucet has run dry. Please visit https://faucet.solana.com for alternate sources of test SOL"}, "id": "198b2c3a-9093-47dc-902a-e0028d4dd056" } 
+[0m
+[33mPlease manually fund: 782UEzXBapVq1zB8pWdrjm5YE24LR1Am7SGoZcof3oeJ[0m
+[33mVisit: https://solfaucet.com[0m
+[34m  Current balance: 0.1000 SOL[0m
+[31m
+❌ Starter tier test FAILED: Insufficient balance. Need 1.1 SOL, have 0.099985 SOL[0m
+[33m
+⏸️  Waiting 5 seconds before next test...[0m
+
+======================================================================
+[36m[1mTesting Professional Tier - $2.1 SOL[0m
+======================================================================
+[36m
+1️⃣  Checking wallet balance...[0m
+[33m💰 Balance too low (0.099985 SOL). Requesting airdrop...[0m
+Server responded with 429 Too Many Requests.  Retrying after 500ms delay...
+Server responded with 429 Too Many Requests.  Retrying after 1000ms delay...
+Server responded with 429 Too Many Requests.  Retrying after 2000ms delay...
+Server responded with 429 Too Many Requests.  Retrying after 4000ms delay...
+[31m✗ Airdrop failed: 429 Too Many Requests:  {"jsonrpc":"2.0","error":{"code": 429, "message":"You've either reached your airdrop limit today or the airdrop faucet has run dry. Please visit https://faucet.solana.com for alternate sources of test SOL"}, "id": "8d4171d2-4dc2-4b8a-94e4-6932ee3ac105" } 
+[0m
+[33mPlease manually fund: 782UEzXBapVq1zB8pWdrjm5YE24LR1Am7SGoZcof3oeJ[0m
+[33mVisit: https://solfaucet.com[0m
+[34m  Current balance: 0.1000 SOL[0m
+[31m
+❌ Professional tier test FAILED: Insufficient balance. Need 2.1 SOL, have 0.099985 SOL[0m
+[33m
+⏸️  Waiting 5 seconds before next test...[0m
+
+======================================================================
+[36m[1mTesting Enterprise Tier - $4.4 SOL[0m
+======================================================================
+[36m
+1️⃣  Checking wallet balance...[0m
+[33m💰 Balance too low (0.099985 SOL). Requesting airdrop...[0m
+Server responded with 429 Too Many Requests.  Retrying after 500ms delay...
+Server responded with 429 Too Many Requests.  Retrying after 1000ms delay...
+Server responded with 429 Too Many Requests.  Retrying after 2000ms delay...
+Server responded with 429 Too Many Requests.  Retrying after 4000ms delay...
+[31m✗ Airdrop failed: 429 Too Many Requests:  {"jsonrpc":"2.0","error":{"code": 429, "message":"You've either reached your airdrop limit today or the airdrop faucet has run dry. Please visit https://faucet.solana.com for alternate sources of test SOL"}, "id": "9f1b227b-a953-4512-9abd-e07c939bc6e9" } 
+[0m
+[33mPlease manually fund: 782UEzXBapVq1zB8pWdrjm5YE24LR1Am7SGoZcof3oeJ[0m
+[33mVisit: https://solfaucet.com[0m
+[34m  Current balance: 0.1000 SOL[0m
+[31m
+❌ Enterprise tier test FAILED: Insufficient balance. Need 4.4 SOL, have 0.099985 SOL[0m
+
+======================================================================
+[36m[1mTest Summary[0m
+======================================================================
+
+[31m❌ Starter Tier: FAILED[0m
+[31m   Error: Insufficient balance. Need 1.1 SOL, have 0.099985 SOL[0m
+
+[31m❌ Professional Tier: FAILED[0m
+[31m   Error: Insufficient balance. Need 2.1 SOL, have 0.099985 SOL[0m
+
+[31m❌ Enterprise Tier: FAILED[0m
+[31m   Error: Insufficient balance. Need 4.4 SOL, have 0.099985 SOL[0m
+
+======================================================================
+[36mTotal: 3 tests[0m
+[32m✅ Passed: 0[0m
+[31m❌ Failed: 3[0m
+======================================================================
+[33m
+⚠️  Some tests failed. Please review the errors above.[0m
+[dotenv@17.2.3] injecting env (24) from .env -- tip: ⚙️  enable debug logging with { debug: true }
+[34m📝 Loaded existing test wallet: 782UEzXBapVq1zB8pWdrjm5YE24LR1Am7SGoZcof3oeJ[0m
+[35m
+🧪 End-to-End Payment & Generation Test Suite
+[0m
+[34mTest Wallet: 782UEzXBapVq1zB8pWdrjm5YE24LR1Am7SGoZcof3oeJ[0m
+[34mTreasury Wallet: CS4y3Ee2ZaXuwHheWgZ9Mosd2EGx1RfKqVGiAnnJ58XB[0m
+[34mAPI Base: http://localhost:3003
+[0m
+[32m✓ Dev server is running
+[0m
+
+======================================================================
+[36m[1mTesting Starter Tier - $1.1 SOL[0m
+======================================================================
+[36m
+1️⃣  Checking wallet balance...[0m
+[34m  Current balance: 7.7000 SOL[0m
+[36m
+2️⃣  Creating generation...[0m
+[34m
+📝 Creating generation record for Starter tier...[0m
+[32m✓ Generation created: ROnCk1-XqsgWxNRN[0m
+[36m
+3️⃣  Sending payment...[0m
+[34m
+💸 Sending payment of 1.1 SOL...[0m
+[32m✓ Payment sent! Transaction: hTJ2rewuszBM1r5SrqJLFLUPEYYZSyjDpRX9qLx1WJqgqTipNXJi9fmze7wQnyz2QcnLNs7fFVgw1fE9CFuaSev[0m
+[34m  View: https://explorer.solana.com/tx/hTJ2rewuszBM1r5SrqJLFLUPEYYZSyjDpRX9qLx1WJqgqTipNXJi9fmze7wQnyz2QcnLNs7fFVgw1fE9CFuaSev?cluster=devnet[0m
+[36m
+4️⃣  Verifying payment...[0m
+[34m
+🔍 Verifying payment...[0m
+[32m✓ Payment verified successfully![0m
+[34m  Confirmations: 14[0m
+[36m
+5️⃣  Triggering AI generation...[0m
+[34m
+🤖 Triggering AI generation...[0m
+[31m✗ Generation trigger failed: Request failed with status code 500[0m
+[31m  Details: {
+  "success": false,
+  "error": "Generation failed: 400 max_tokens is too large: 16000. This model supports at most 4096 completion tokens, whereas you provided 16000."
+}[0m
+[31m
+❌ Starter tier test FAILED: Request failed with status code 500[0m
+[33m
+⏸️  Waiting 5 seconds before next test...[0m
+
+======================================================================
+[36m[1mTesting Professional Tier - $2.1 SOL[0m
+======================================================================
+[36m
+1️⃣  Checking wallet balance...[0m
+[34m  Current balance: 6.6000 SOL[0m
+[36m
+2️⃣  Creating generation...[0m
+[34m
+📝 Creating generation record for Professional tier...[0m
+[32m✓ Generation created: WVFrvzC9vQEzSHMl[0m
+[36m
+3️⃣  Sending payment...[0m
+[34m
+💸 Sending payment of 2.1 SOL...[0m
+[32m✓ Payment sent! Transaction: 53eVb2bjYCbHvV7WvfdEssqdAMeMqzi29jDT2hrQ2HdMkYS3QwMWeC2nRpvkVFQ5wzg3FVsUnxL8wmzpUTR5fnLx[0m
+[34m  View: https://explorer.solana.com/tx/53eVb2bjYCbHvV7WvfdEssqdAMeMqzi29jDT2hrQ2HdMkYS3QwMWeC2nRpvkVFQ5wzg3FVsUnxL8wmzpUTR5fnLx?cluster=devnet[0m
+[36m
+4️⃣  Verifying payment...[0m
+[34m
+🔍 Verifying payment...[0m
+[32m✓ Payment verified successfully![0m
+[34m  Confirmations: 14[0m
+[36m
+5️⃣  Triggering AI generation...[0m
+[34m
+🤖 Triggering AI generation...[0m
+[31m✗ Generation trigger failed: Request failed with status code 500[0m
+[31m  Details: {
+  "success": false,
+  "error": "Generation failed: 400 max_tokens is too large: 16000. This model supports at most 4096 completion tokens, whereas you provided 16000."
+}[0m
+[31m
+❌ Professional tier test FAILED: Request failed with status code 500[0m
+[33m
+⏸️  Waiting 5 seconds before next test...[0m
+
+======================================================================
+[36m[1mTesting Enterprise Tier - $4.4 SOL[0m
+======================================================================
+[36m
+1️⃣  Checking wallet balance...[0m
+[34m  Current balance: 4.5000 SOL[0m
+[36m
+2️⃣  Creating generation...[0m
+[34m
+📝 Creating generation record for Enterprise tier...[0m
+[32m✓ Generation created: 9NJ59rqn-M7wKK7s[0m
+[36m
+3️⃣  Sending payment...[0m
+[34m
+💸 Sending payment of 4.4 SOL...[0m
+[32m✓ Payment sent! Transaction: 36Q2nNtbRxmnHCV2ttLDRe5Y57AXiCxAorRRfnmTHfP6aPjxhcdMRy9YKNALkx2bsrz4TJMSX3dnj3tRkaQuXtfm[0m
+[34m  View: https://explorer.solana.com/tx/36Q2nNtbRxmnHCV2ttLDRe5Y57AXiCxAorRRfnmTHfP6aPjxhcdMRy9YKNALkx2bsrz4TJMSX3dnj3tRkaQuXtfm?cluster=devnet[0m
+[36m
+4️⃣  Verifying payment...[0m
+[34m
+🔍 Verifying payment...[0m
+[32m✓ Payment verified successfully![0m
+[34m  Confirmations: 15[0m
+[36m
+5️⃣  Triggering AI generation...[0m
+[34m
+🤖 Triggering AI generation...[0m
+[31m✗ Generation trigger failed: Request failed with status code 500[0m
+[31m  Details: {
+  "success": false,
+  "error": "Generation failed: 400 max_tokens is too large: 16000. This model supports at most 4096 completion tokens, whereas you provided 16000."
+}[0m
+[31m
+❌ Enterprise tier test FAILED: Request failed with status code 500[0m
+
+======================================================================
+[36m[1mTest Summary[0m
+======================================================================
+
+[31m❌ Starter Tier: FAILED[0m
+[34m   Generation ID: ROnCk1-XqsgWxNRN[0m
+[34m   Transaction: hTJ2rewuszBM1r5SrqJLFLUPEYYZSyjDpRX9qLx1WJqgqTipNXJi9fmze7wQnyz2QcnLNs7fFVgw1fE9CFuaSev[0m
+[31m   Error: Request failed with status code 500[0m
+
+[31m❌ Professional Tier: FAILED[0m
+[34m   Generation ID: WVFrvzC9vQEzSHMl[0m
+[34m   Transaction: 53eVb2bjYCbHvV7WvfdEssqdAMeMqzi29jDT2hrQ2HdMkYS3QwMWeC2nRpvkVFQ5wzg3FVsUnxL8wmzpUTR5fnLx[0m
+[31m   Error: Request failed with status code 500[0m
+
+[31m❌ Enterprise Tier: FAILED[0m
+[34m   Generation ID: 9NJ59rqn-M7wKK7s[0m
+[34m   Transaction: 36Q2nNtbRxmnHCV2ttLDRe5Y57AXiCxAorRRfnmTHfP6aPjxhcdMRy9YKNALkx2bsrz4TJMSX3dnj3tRkaQuXtfm[0m
+[31m   Error: Request failed with status code 500[0m
+
+======================================================================
+[36mTotal: 3 tests[0m
+[32m✅ Passed: 0[0m
+[31m❌ Failed: 3[0m
+======================================================================
+[33m
+⚠️  Some tests failed. Please review the errors above.[0m
