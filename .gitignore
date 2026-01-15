@@ -51,3 +51,6 @@ next-env.d.ts
 
 # OS
 Thumbs.db
+.env.backup
+.env.local
+.env.production
