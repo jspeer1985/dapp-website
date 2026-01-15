@@ -36,7 +36,7 @@ export async function GET(
 
     const sanitizedName = generation.projectName.replace(/[^a-z0-9-]/gi, '-').toLowerCase();
 
-    return new NextResponse(fileBuffer, {
+    return new NextResponse(new Uint8Array(fileBuffer), {
       headers: {
         'Content-Type': 'application/zip',
         'Content-Disposition': `attachment; filename="${sanitizedName}.zip"`,

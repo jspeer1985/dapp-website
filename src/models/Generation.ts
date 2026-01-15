@@ -47,7 +47,7 @@ export interface IGeneration extends Document {
 
   payment: {
     amount: number;
-    currency: 'SOL';
+    currency: 'SOL' | 'USD';
     transactionSignature?: string;
     status: 'pending' | 'confirmed' | 'failed' | 'refunded';
     timestamp: Date;
@@ -55,7 +55,7 @@ export interface IGeneration extends Document {
   };
 
   status: 'pending_payment' | 'payment_confirmed' | 'generating' | 'review_required' |
-          'whitelist_pending' | 'approved' | 'deploying' | 'completed' | 'failed' | 'refunded';
+  'whitelist_pending' | 'approved' | 'deploying' | 'completed' | 'failed' | 'refunded';
 
   generatedCode?: {
     files: Array<{
@@ -89,6 +89,7 @@ export interface IGeneration extends Document {
     expiresAt: Date;
     downloadCount: number;
     maxDownloads: number;
+    lastDownloadedAt?: Date;
   };
 
   deployment?: {
@@ -236,6 +237,7 @@ const GenerationSchema: Schema = new Schema({
     expiresAt: Date,
     downloadCount: { type: Number, default: 0 },
     maxDownloads: { type: Number, default: 10 },
+    lastDownloadedAt: Date,
   },
 
   deployment: {
@@ -277,7 +279,7 @@ const GenerationSchema: Schema = new Schema({
 GenerationSchema.index({ walletAddress: 1, 'timestamps.created': -1 });
 GenerationSchema.index({ status: 1, 'timestamps.created': -1 });
 
-GenerationSchema.methods.canDownload = function(): boolean {
+GenerationSchema.methods.canDownload = function (): boolean {
   if (!this.downloadInfo) return false;
   return (
     this.downloadInfo.downloadCount < this.downloadInfo.maxDownloads &&
@@ -285,16 +287,16 @@ GenerationSchema.methods.canDownload = function(): boolean {
   );
 };
 
-GenerationSchema.methods.incrementDownloadCount = function(): Promise<IGeneration> {
+GenerationSchema.methods.incrementDownloadCount = function (): Promise<IGeneration> {
   this.downloadInfo.downloadCount += 1;
   return this.save();
 };
 
-GenerationSchema.statics.findByWallet = function(walletAddress: string) {
+GenerationSchema.statics.findByWallet = function (walletAddress: string) {
   return this.find({ walletAddress }).sort({ 'timestamps.created': -1 });
 };
 
-GenerationSchema.statics.findPendingReviews = function() {
+GenerationSchema.statics.findPendingReviews = function () {
   return this.find({
     status: 'review_required',
     'compliance.whitelistStatus': 'pending'

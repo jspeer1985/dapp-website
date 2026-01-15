@@ -65,9 +65,12 @@ const REQUIRED_VARS = {
   'AI_PROVIDER': 'AI provider (openai/anthropic)',
 
   // Pricing
-  'NEXT_PUBLIC_STARTER_PRICE_SOL': 'Starter tier price',
-  'NEXT_PUBLIC_PROFESSIONAL_PRICE_SOL': 'Professional tier price',
-  'NEXT_PUBLIC_ENTERPRISE_PRICE_SOL': 'Enterprise tier price',
+  'NEXT_PUBLIC_DAPP_STARTER_PRICE_SOL': 'DApp Starter tier price (SOL)',
+  'NEXT_PUBLIC_DAPP_PROFESSIONAL_PRICE_SOL': 'DApp Professional tier price (SOL)',
+  'NEXT_PUBLIC_DAPP_ENTERPRISE_PRICE_SOL': 'DApp Enterprise tier price (SOL)',
+  'NEXT_PUBLIC_TOKEN_STARTER_PRICE_SOL': 'Token Starter tier price (SOL)',
+  'NEXT_PUBLIC_TOKEN_PROFESSIONAL_PRICE_SOL': 'Token Professional tier price (SOL)',
+  'NEXT_PUBLIC_TOKEN_ENTERPRISE_PRICE_SOL': 'Token Enterprise tier price (SOL)',
 };
 
 async function checkEnvVariables() {

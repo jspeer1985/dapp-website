@@ -12,6 +12,8 @@ import { connectToDatabase } from '@/lib/mongodb';
 import Generation from '@/models/Generation';
 import SolanaService from '@/utils/SolanaService';
 import { nanoid } from 'nanoid';
+import { rateLimit } from '@/middleware/rateLimit';
+import { createLogger } from '@/utils/logger';
 
 const verifyPaymentSchema = z.object({
   jobId: z.string(), // Factory generationId
@@ -19,20 +21,27 @@ const verifyPaymentSchema = z.object({
   customerEmail: z.string().email().optional(),
 });
 
-const logger = {
-  info: (message: string, data?: any) => {
-    console.log(`[OPTIK Payment] ${message}`, data ? JSON.stringify(data, null, 2) : '');
-  },
-  error: (message: string, error: any) => {
-    console.error(`[OPTIK Payment ERROR] ${message}`, error);
-  },
-};
+const logger = createLogger('PaymentVerification');
 
 export async function POST(request: NextRequest) {
   const requestId = nanoid(16);
   const startTime = Date.now();
 
-  logger.info(`Payment verification request [${requestId}]`);
+  // 0. Rate limiting
+  const rateLimitResult = rateLimit(request, {
+    windowMs: 5 * 60 * 1000, // 5 minutes
+    maxRequests: 10, // Verification can be retried a few times
+  });
+
+  if (!rateLimitResult.allowed) {
+    logger.warn({ ip: request.headers.get('x-forwarded-for') }, 'Rate limit exceeded for payment verification');
+    return NextResponse.json(
+      { success: false, error: 'Too many verification attempts. Please wait.' },
+      { status: 429 }
+    );
+  }
+
+  logger.info({ requestId }, `Payment verification request`);
 
   try {
     // 1. Validate input
@@ -125,7 +134,7 @@ export async function POST(request: NextRequest) {
       confirmations: verification.confirmations,
       message: 'Payment verified. Generation starting...',
       estimatedCompletionMinutes: generation.tier === 'enterprise' ? 90 :
-                                   generation.tier === 'professional' ? 60 : 30,
+        generation.tier === 'professional' ? 60 : 30,
       processingTime: responseTime,
     });
 

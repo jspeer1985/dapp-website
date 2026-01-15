@@ -8,7 +8,7 @@ import Link from 'next/link';
 export default function MasterHero() {
   return (
     <section className="relative overflow-hidden py-20 md:py-32">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5" />
 
       <div className="container relative z-10">
         <div className="mx-auto max-w-4xl text-center">

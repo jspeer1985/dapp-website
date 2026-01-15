@@ -110,9 +110,9 @@ const TIER_FEATURES = {
   starter: {
     maxTokenSupply: 1_000_000_000,
     maxNFTCollection: 1000,
-    wallet: ['phantom'], // Only Phantom wallet
-    dappFeatures: ['wallet-connection', 'token-display', 'basic-ui'],
-    protocolFeatures: [], // No protocol features
+    wallet: ['phantom'] as string[], // Only Phantom wallet
+    dappFeatures: ['wallet-connection', 'token-display', 'basic-ui'] as string[],
+    protocolFeatures: [] as string[], // No protocol features
     liquidityPool: false,
     customDomain: false,
     deployment: false,
@@ -121,9 +121,9 @@ const TIER_FEATURES = {
   professional: {
     maxTokenSupply: 10_000_000_000,
     maxNFTCollection: 10000,
-    wallet: ['phantom', 'solflare', 'torus'], // Multiple wallets
-    dappFeatures: ['wallet-connection', 'token-display', 'advanced-ui', 'token-swap', 'analytics'],
-    protocolFeatures: ['staking', 'governance'], // Staking + Governance
+    wallet: ['phantom', 'solflare', 'torus'] as string[], // Multiple wallets
+    dappFeatures: ['wallet-connection', 'token-display', 'advanced-ui', 'token-swap', 'analytics'] as string[],
+    protocolFeatures: ['staking', 'governance'] as string[], // Staking + Governance
     liquidityPool: false,
     customDomain: true,
     deployment: false,
@@ -132,9 +132,9 @@ const TIER_FEATURES = {
   enterprise: {
     maxTokenSupply: 100_000_000_000,
     maxNFTCollection: 100000,
-    wallet: ['phantom', 'solflare', 'torus', 'ledger'], // All wallets including hardware
-    dappFeatures: ['wallet-connection', 'token-display', 'advanced-ui', 'token-swap', 'analytics', 'admin-panel', 'custom-branding'],
-    protocolFeatures: ['staking', 'governance', 'treasury', 'multisig'], // Full protocol suite
+    wallet: ['phantom', 'solflare', 'torus', 'ledger'] as string[], // All wallets including hardware
+    dappFeatures: ['wallet-connection', 'token-display', 'advanced-ui', 'token-swap', 'analytics', 'admin-panel', 'custom-branding'] as string[],
+    protocolFeatures: ['staking', 'governance', 'treasury', 'multisig'] as string[], // Full protocol suite
     liquidityPool: true,
     customDomain: true,
     deployment: true, // Mainnet deployment included
@@ -975,7 +975,7 @@ export default function Home() {
 
       // Generate staking contract (if requested and allowed)
       if (requestedFeatures.some(f => f.toLowerCase() === 'staking') &&
-          tierFeatures.protocolFeatures.includes('staking')) {
+        tierFeatures.protocolFeatures.includes('staking')) {
 
         const stakingContract = `use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, TokenAccount, Transfer};
@@ -1129,7 +1129,7 @@ pub enum StakingError {
 
       // Generate governance contract (if requested and allowed)
       if (requestedFeatures.some(f => f.toLowerCase() === 'governance') &&
-          tierFeatures.protocolFeatures.includes('governance')) {
+        tierFeatures.protocolFeatures.includes('governance')) {
 
         const governanceContract = `use anchor_lang::prelude::*;
 

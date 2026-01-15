@@ -3,6 +3,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { CreditCard } from 'lucide-react';
 import { getTierPrice, getTokenPrice, getDAppPrice, getBundlePrice, getTierInfo } from '@/lib/pricing';
 import type { Tier } from '@/lib/pricing';
 
@@ -25,6 +26,7 @@ interface FormData {
   };
   dappInfo: {
     projectName: string;
+    description: string;
     brandingTheme: 'cyberpunk' | 'minimal' | 'professional' | 'gaming';
     primaryColor: string;
     supportedWallets: string[];
@@ -42,7 +44,7 @@ interface FormData {
     email: string;
     telegramHandle?: string;
     deliveryWallet: string;
-    paymentMethod: 'crypto' | 'stripe';
+    paymentMethod?: 'stripe';
   };
 }
 
@@ -62,6 +64,7 @@ export default function DAppCreationForm() {
     },
     dappInfo: {
       projectName: '',
+      description: '',
       brandingTheme: 'cyberpunk',
       primaryColor: '#00D9FF',
       supportedWallets: ['phantom', 'solflare'],
@@ -73,10 +76,9 @@ export default function DAppCreationForm() {
       fullName: '',
       email: '',
       deliveryWallet: '',
-      paymentMethod: 'crypto',
     },
   });
-  
+
   const [submitting, setSubmitting] = useState(false);
   const [jobId, setJobId] = useState<string | null>(null);
 
@@ -85,11 +87,11 @@ export default function DAppCreationForm() {
       // Bundle pricing with 20% discount
       return getBundlePrice(formData.tokenTier!, formData.dappTier!).usd;
     }
-    
+
     if (formData.productType === 'token-only') {
       return getTokenPrice(formData.tokenTier!).usd;
     }
-    
+
     // dapp-only
     return getDAppPrice(formData.dappTier!).usd;
   };
@@ -105,73 +107,72 @@ export default function DAppCreationForm() {
 
   const handleSubmit = async () => {
     setSubmitting(true);
-    
+
     try {
-      // Convert form data to new compiler format
-      const projectConfig = {
-        project: {
-          name: formData.dappInfo.projectName || formData.tokenInfo.name,
-          type: formData.productType === 'token-and-dapp' ? 'token+dapp' : formData.productType,
-          tier: formData.dappTier || formData.tokenTier || 'professional'
-        },
-        token: {
-          enabled: formData.productType !== 'dapp-only',
+      // 1. Create the generation record in the database first
+      const generationData = {
+        walletAddress: formData.customerInfo.deliveryWallet,
+        customerName: formData.customerInfo.fullName,
+        customerEmail: formData.customerInfo.email,
+        telegramHandle: formData.customerInfo.telegramHandle,
+        projectName: formData.dappInfo.projectName || formData.tokenInfo.name,
+        projectDescription: formData.dappInfo.description || formData.tokenInfo.description,
+        projectType: formData.productType === 'token-and-dapp' ? 'both' :
+          formData.productType === 'token-only' ? 'token' : 'dapp',
+        tier: formData.dappTier || formData.tokenTier || 'professional',
+        tokenConfig: formData.productType !== 'dapp-only' ? {
           name: formData.tokenInfo.name,
           symbol: formData.tokenInfo.symbol,
           decimals: formData.tokenInfo.decimals,
-          supply: parseInt(formData.tokenInfo.totalSupply),
-          nft: false
-        },
-        dapp: {
-          pages: ['home'],
-          features: formData.dappTier === 'starter' ? ['staking'] : 
-                  formData.dappTier === 'professional' ? ['staking', 'governance'] :
-                  ['staking', 'governance', 'lp', 'nft-mint', 'dao', 'swap'],
-          brandColor: formData.dappInfo.primaryColor
-        },
-        infra: {
-          chain: 'solana',
-          db: 'postgres',
-          auth: 'wallet',
-          hosting: 'vercel'
+          totalSupply: parseInt(formData.tokenInfo.totalSupply),
+          isNFT: false,
+          royaltyPercentage: 0
+        } : undefined,
+        metadata: {
+          primaryColor: formData.dappInfo.primaryColor,
         }
       };
 
-      const response = await fetch('/api/compile', {
+      const createResponse = await fetch('/api/generations/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(projectConfig),
+        body: JSON.stringify(generationData),
       });
-      
-      const result = await response.json();
-      
-      if (result.success) {
-        // Convert base64 back to blob and download
-        const binaryString = atob(result.zipData);
-        const bytes = new Uint8Array(binaryString.length);
-        for (let i = 0; i < binaryString.length; i++) {
-          bytes[i] = binaryString.charCodeAt(i);
-        }
-        const blob = new Blob([bytes], { type: 'application/zip' });
-        
-        // Download the file
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${projectConfig.project.name}-dapp.zip`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        
-        setJobId('download-complete');
-      } else {
-        alert('Generation failed: ' + (result.error || 'Unknown error'));
+
+      const createResult = await createResponse.json();
+
+      if (!createResult.success) {
+        throw new Error(createResult.error || 'Failed to create order');
       }
-      
-    } catch (error) {
+
+      const newId = createResult.generationId;
+      setJobId(newId);
+
+      // Handle Stripe payment (Sole payment method)
+      const stripeResponse = await fetch('/api/payments/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jobId: newId,
+          totalPrice: totalPrice,
+          customerEmail: formData.customerInfo.email,
+          productType: formData.productType,
+        }),
+      });
+
+      const stripeResult = await stripeResponse.json();
+
+      if (stripeResult.url) {
+        // Redirect to Stripe Checkout
+        window.location.href = stripeResult.url;
+        return;
+      } else {
+        throw new Error('Failed to start Stripe checkout');
+      }
+
+    } catch (error: any) {
       console.error('Submission failed:', error);
-      alert('Failed to generate dApp. Please try again.');
+      alert('Failed to process order: ' + error.message);
     } finally {
       setSubmitting(false);
     }
@@ -191,12 +192,12 @@ export default function DAppCreationForm() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            
+
             <h1 className="text-4xl font-bold text-white mb-4">Order Received! 🚀</h1>
             <p className="text-xl text-gray-300 mb-8">
               Your production-ready DApp is being generated by our AI team.
             </p>
-            
+
             <div className="bg-black/30 rounded-xl p-6 mb-8">
               <div className="flex justify-between items-center mb-4">
                 <span className="text-gray-400">Job ID:</span>
@@ -211,13 +212,13 @@ export default function DAppCreationForm() {
                 <span className="text-green-400 font-bold">⚡ Processing</span>
               </div>
             </div>
-            
+
             <p className="text-gray-400 mb-8">
               We'll email you at <strong className="text-white">{formData.customerInfo.email}</strong> when your project is ready.
             </p>
-            
-            
-              <a
+
+
+            <a
               href={`/track/${jobId}`}
               className="inline-block bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:scale-105 transition-transform"
             >
@@ -245,7 +246,7 @@ export default function DAppCreationForm() {
             Optik generates structured, deployable codebases including smart contracts, wallet-enabled applications, and backend architecture.
           </p>
           <p className="text-lg text-purple-400 mt-2 font-semibold">
-            Start from $99
+            Start from $249
           </p>
         </motion.div>
 
@@ -254,9 +255,8 @@ export default function DAppCreationForm() {
           {[1, 2, 3, 4, 5].map((s) => (
             <div
               key={s}
-              className={`flex-1 h-2 rounded-full mx-1 transition-all ${
-                s <= step ? 'bg-gradient-to-r from-blue-500 to-purple-600' : 'bg-white/20'
-              }`}
+              className={`flex-1 h-2 rounded-full mx-1 transition-all ${s <= step ? 'bg-gradient-to-r from-blue-500 to-purple-600' : 'bg-white/20'
+                }`}
             />
           ))}
         </div>
@@ -274,29 +274,31 @@ export default function DAppCreationForm() {
             {step === 1 && (
               <div>
                 <h2 className="text-3xl font-bold text-white mb-6">What do you need?</h2>
-                
+
                 <div className="grid grid-cols-3 gap-4 mb-8">
                   {[
                     { value: 'token-only', label: 'Token Only', icon: '🪙' },
                     { value: 'dapp-only', label: 'DApp Only', icon: '🖥️' },
-                    { value: 'token-and-dapp', label: 'Token + DApp', icon: '🚀', recommended: true },
+                    { value: 'token-and-dapp', label: 'Token + DApp', icon: '🚀', recommended: true, savings: 'SAVE 10%' },
                   ].map((option) => (
                     <button
                       key={option.value}
                       onClick={() => setFormData({ ...formData, productType: option.value as ProductType })}
-                      className={`relative p-6 rounded-xl border-2 transition-all ${
-                        formData.productType === option.value
-                          ? 'border-blue-500 bg-blue-500/20'
-                          : 'border-white/20 bg-white/5 hover:border-white/40'
-                      }`}
+                      className={`relative p-6 rounded-xl border-2 transition-all ${formData.productType === option.value
+                        ? 'border-blue-500 bg-blue-500/20'
+                        : 'border-white/20 bg-white/5 hover:border-white/40'
+                        }`}
                     >
                       {option.recommended && (
-                        <div className="absolute -top-3 -right-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-black text-xs font-bold px-3 py-1 rounded-full">
+                        <div className="absolute -top-3 -right-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-black text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">
                           POPULAR
                         </div>
                       )}
                       <div className="text-4xl mb-2">{option.icon}</div>
                       <div className="text-white font-bold">{option.label}</div>
+                      {option.savings && (
+                        <div className="text-green-400 text-xs font-bold mt-1">{option.savings}</div>
+                      )}
                     </button>
                   ))}
                 </div>
@@ -313,15 +315,13 @@ export default function DAppCreationForm() {
                           <button
                             key={tier}
                             onClick={() => setFormData({ ...formData, tokenTier: tier })}
-                            className={`p-6 rounded-xl border-2 text-left transition-all ${
-                              formData.tokenTier === tier
-                                ? 'border-purple-500 bg-purple-500/20'
-                                : 'border-white/20 bg-white/5 hover:border-white/40'
-                            }`}
+                            className={`p-6 rounded-xl border-2 text-left transition-all ${formData.tokenTier === tier
+                              ? 'border-purple-500 bg-purple-500/20'
+                              : 'border-white/20 bg-white/5 hover:border-white/40'
+                              }`}
                           >
                             <div className="text-lg font-bold text-white mb-2">{tierInfo.name}</div>
                             <div className="text-2xl font-bold text-purple-400 mb-2">${tierPrice.usd}</div>
-                            <div className="text-sm text-gray-300 mb-1">{tierPrice.sol} SOL</div>
                             <div className="text-xs text-purple-300 mb-3">{tierInfo.target}</div>
                             <div className="text-xs text-gray-400 mb-3">{tierInfo.generatedElements}</div>
                             <ul className="space-y-1">
@@ -347,15 +347,13 @@ export default function DAppCreationForm() {
                           <button
                             key={tier}
                             onClick={() => setFormData({ ...formData, dappTier: tier })}
-                            className={`p-6 rounded-xl border-2 text-left transition-all ${
-                              formData.dappTier === tier
-                                ? 'border-blue-500 bg-blue-500/20'
-                                : 'border-white/20 bg-white/5 hover:border-white/40'
-                            }`}
+                            className={`p-6 rounded-xl border-2 text-left transition-all ${formData.dappTier === tier
+                              ? 'border-blue-500 bg-blue-500/20'
+                              : 'border-white/20 bg-white/5 hover:border-white/40'
+                              }`}
                           >
                             <div className="text-lg font-bold text-white mb-2">{tierInfo.name}</div>
                             <div className="text-2xl font-bold text-blue-400 mb-2">${tierPrice.usd}</div>
-                            <div className="text-sm text-gray-300 mb-1">{tierPrice.sol} SOL</div>
                             <div className="text-xs text-blue-300 mb-3">{tierInfo.target}</div>
                             <div className="text-xs text-gray-400 mb-3">{tierInfo.generatedElements}</div>
                             <ul className="space-y-1">
@@ -376,7 +374,7 @@ export default function DAppCreationForm() {
             {step === 2 && formData.productType !== 'dapp-only' && (
               <div>
                 <h2 className="text-3xl font-bold text-white mb-6">Token Details</h2>
-                
+
                 <div className="space-y-6">
                   <div>
                     <label className="block text-white font-bold mb-2">Token Name</label>
@@ -455,14 +453,13 @@ export default function DAppCreationForm() {
                   {formData.tokenTier !== 'starter' && (
                     <div className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-6">
                       <h3 className="text-white font-bold mb-4">Advanced Features</h3>
-                      
+
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-white font-bold mb-2">Buy Tax (%)</label>
+                          <label htmlFor="buyTax" className="block text-white font-bold mb-2">Buy Tax (%)</label>
                           <input
+                            id="buyTax"
                             type="number"
-                            min="0"
-                            max="10"
                             value={formData.tokenInfo.buyTax || 0}
                             onChange={(e) => setFormData({
                               ...formData,
@@ -473,11 +470,10 @@ export default function DAppCreationForm() {
                         </div>
 
                         <div>
-                          <label className="block text-white font-bold mb-2">Sell Tax (%)</label>
+                          <label htmlFor="sellTax" className="block text-white font-bold mb-2">Sell Tax (%)</label>
                           <input
+                            id="sellTax"
                             type="number"
-                            min="0"
-                            max="10"
                             value={formData.tokenInfo.sellTax || 0}
                             onChange={(e) => setFormData({
                               ...formData,
@@ -489,12 +485,10 @@ export default function DAppCreationForm() {
                       </div>
 
                       <div className="mt-4">
-                        <label className="block text-white font-bold mb-2">Max Wallet (% of supply)</label>
+                        <label htmlFor="maxWallet" className="block text-white font-bold mb-2">Max Wallet (% of supply)</label>
                         <input
+                          id="maxWallet"
                           type="number"
-                          min="0.1"
-                          max="5"
-                          step="0.1"
                           value={formData.tokenInfo.maxWalletPercentage || 2}
                           onChange={(e) => setFormData({
                             ...formData,
@@ -513,7 +507,7 @@ export default function DAppCreationForm() {
             {step === 3 && formData.productType !== 'token-only' && (
               <div>
                 <h2 className="text-3xl font-bold text-white mb-6">DApp Customization</h2>
-                
+
                 <div className="space-y-6">
                   <div>
                     <label className="block text-white font-bold mb-2">Project Name</label>
@@ -525,6 +519,20 @@ export default function DAppCreationForm() {
                         dappInfo: { ...formData.dappInfo, projectName: e.target.value }
                       })}
                       placeholder="Quantum Finance Platform"
+                      className="w-full bg-white/10 border border-white/20 rounded-xl px-6 py-4 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-white font-bold mb-2">Project Description</label>
+                    <textarea
+                      value={formData.dappInfo.description}
+                      onChange={(e) => setFormData({
+                        ...formData,
+                        dappInfo: { ...formData.dappInfo, description: e.target.value }
+                      })}
+                      placeholder="A decentralized platform for quantum-safe financial operations..."
+                      rows={3}
                       className="w-full bg-white/10 border border-white/20 rounded-xl px-6 py-4 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
                     />
                   </div>
@@ -544,11 +552,10 @@ export default function DAppCreationForm() {
                             ...formData,
                             dappInfo: { ...formData.dappInfo, brandingTheme: theme.value as any }
                           })}
-                          className={`p-4 rounded-xl border-2 transition-all ${
-                            formData.dappInfo.brandingTheme === theme.value
-                              ? 'border-blue-500 bg-blue-500/20'
-                              : 'border-white/20 bg-white/5 hover:border-white/40'
-                          }`}
+                          className={`p-4 rounded-xl border-2 transition-all ${formData.dappInfo.brandingTheme === theme.value
+                            ? 'border-blue-500 bg-blue-500/20'
+                            : 'border-white/20 bg-white/5 hover:border-white/40'
+                            }`}
                         >
                           <div className="text-3xl mb-2">{theme.preview}</div>
                           <div className="text-white font-bold text-sm">{theme.label}</div>
@@ -562,6 +569,7 @@ export default function DAppCreationForm() {
                     <div className="flex gap-4">
                       <input
                         type="color"
+                        aria-label="Primary Theme Color"
                         value={formData.dappInfo.primaryColor}
                         onChange={(e) => setFormData({
                           ...formData,
@@ -628,11 +636,10 @@ export default function DAppCreationForm() {
 
                       {formData.dappInfo.stakingEnabled && (
                         <div>
-                          <label className="block text-white font-bold mb-2">Staking APY (%)</label>
+                          <label htmlFor="stakingAPY" className="block text-white font-bold mb-2">Staking APY (%)</label>
                           <input
+                            id="stakingAPY"
                             type="number"
-                            min="5"
-                            max="20"
                             value={formData.dappInfo.stakingAPY || 12}
                             onChange={(e) => setFormData({
                               ...formData,
@@ -652,14 +659,14 @@ export default function DAppCreationForm() {
             {step === 4 && (
               <div>
                 <h2 className="text-3xl font-bold text-white mb-6">Liquidity Pool (Optional)</h2>
-                
+
                 <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-6 mb-8">
                   <div className="flex items-start gap-4">
                     <div className="text-4xl">💡</div>
                     <div>
                       <h3 className="text-white font-bold mb-2">Why add liquidity?</h3>
                       <p className="text-gray-300">
-                        Without a liquidity pool, your token can't be traded on DEXs. 
+                        Without a liquidity pool, your token can't be traded on DEXs.
                         We recommend at least $50k for serious projects.
                       </p>
                     </div>
@@ -702,8 +709,9 @@ export default function DAppCreationForm() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-white font-bold mb-2">Pair Token</label>
+                        <label htmlFor="pairToken" className="block text-white font-bold mb-2">Pair Token</label>
                         <select
+                          id="pairToken"
                           value={formData.liquidityPool.pairToken || 'SOL'}
                           onChange={(e) => setFormData({
                             ...formData,
@@ -718,8 +726,9 @@ export default function DAppCreationForm() {
                       </div>
 
                       <div>
-                        <label className="block text-white font-bold mb-2">DEX Platform</label>
+                        <label htmlFor="dexPlatform" className="block text-white font-bold mb-2">DEX Platform</label>
                         <select
+                          id="dexPlatform"
                           value={formData.liquidityPool.dexPlatform || 'raydium'}
                           onChange={(e) => setFormData({
                             ...formData,
@@ -767,7 +776,7 @@ export default function DAppCreationForm() {
             {step === 5 && (
               <div>
                 <h2 className="text-3xl font-bold text-white mb-6">Your Information</h2>
-                
+
                 <div className="space-y-6 mb-8">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -834,15 +843,15 @@ export default function DAppCreationForm() {
                 {/* Order Summary */}
                 <div className="bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-white/30 rounded-2xl p-8">
                   <h3 className="text-2xl font-bold text-white mb-6">Order Summary</h3>
-                  
+
                   <div className="space-y-4 mb-6">
                     {formData.productType !== 'dapp-only' && (
                       <div className="flex justify-between items-center">
                         <span className="text-gray-300">
-                          Token ({formData.tokenTier?.replace('tier-', 'Tier ')})
+                          Token ({formData.tokenTier})
                         </span>
                         <span className="text-white font-bold">
-                          ${getTierPrice(formData.tokenTier!).usd.toLocaleString()}
+                          ${getTokenPrice(formData.tokenTier!).usd.toLocaleString()}
                         </span>
                       </div>
                     )}
@@ -850,10 +859,21 @@ export default function DAppCreationForm() {
                     {formData.productType !== 'token-only' && (
                       <div className="flex justify-between items-center">
                         <span className="text-gray-300">
-                          DApp ({formData.dappTier?.replace('tier-', 'Tier ')})
+                          DApp ({formData.dappTier})
                         </span>
                         <span className="text-white font-bold">
-                          ${getTierPrice(formData.dappTier!).usd.toLocaleString()}
+                          ${getDAppPrice(formData.dappTier!).usd.toLocaleString()}
+                        </span>
+                      </div>
+                    )}
+
+                    {formData.productType === 'token-and-dapp' && (
+                      <div className="flex justify-between items-center bg-green-500/10 p-2 rounded-lg border border-green-500/30">
+                        <span className="text-green-400 text-sm font-bold">
+                          Bundle Discount (10%+)
+                        </span>
+                        <span className="text-green-400 font-bold">
+                          -${(getTokenPrice(formData.tokenTier!).usd + getDAppPrice(formData.dappTier!).usd - getBundlePrice(formData.tokenTier!, formData.dappTier!).usd).toLocaleString()}
                         </span>
                       </div>
                     )}
@@ -885,33 +905,11 @@ export default function DAppCreationForm() {
                     </div>
                   </div>
 
-                  <div className="mt-6 grid grid-cols-2 gap-4">
-                    <button
-                      onClick={() => setFormData({
-                        ...formData,
-                        customerInfo: { ...formData.customerInfo, paymentMethod: 'crypto' }
-                      })}
-                      className={`p-4 rounded-xl border-2 font-bold transition-all ${
-                        formData.customerInfo.paymentMethod === 'crypto'
-                          ? 'border-green-500 bg-green-500/20 text-white'
-                          : 'border-white/20 bg-white/5 text-gray-400 hover:border-white/40'
-                      }`}
-                    >
-                      💰 Pay with Crypto
-                    </button>
-                    <button
-                      onClick={() => setFormData({
-                        ...formData,
-                        customerInfo: { ...formData.customerInfo, paymentMethod: 'stripe' }
-                      })}
-                      className={`p-4 rounded-xl border-2 font-bold transition-all ${
-                        formData.customerInfo.paymentMethod === 'stripe'
-                          ? 'border-blue-500 bg-blue-500/20 text-white'
-                          : 'border-white/20 bg-white/5 text-gray-400 hover:border-white/40'
-                      }`}
-                    >
-                      💳 Pay with Card
-                    </button>
+                  <div className="mt-6">
+                    <div className="w-full p-4 rounded-xl border-2 border-blue-500 bg-blue-500/20 text-white font-bold text-center flex items-center justify-center gap-2">
+                      <CreditCard className="w-5 h-5" />
+                      Paying with Credit/Debit Card (Stripe)
+                    </div>
                   </div>
                 </div>
 
@@ -920,8 +918,11 @@ export default function DAppCreationForm() {
                   <label className="flex items-start gap-3 cursor-pointer">
                     <input type="checkbox" className="w-5 h-5 mt-1" required />
                     <span className="text-sm text-gray-300">
-                      I understand that all code is provided as-is, ownership transfers only after full payment, 
-                      and scope is locked at payment. No refunds after deployment begins.
+                      I understand that all code is provided as-is, ownership transfers only after full payment,
+                      and scope is locked at payment. No refunds after deployment begins. Read our {' '}
+                      <a href="/terms" target="_blank" className="text-blue-400 underline hover:text-blue-300">
+                        Terms of Service
+                      </a>.
                     </span>
                   </label>
                 </div>

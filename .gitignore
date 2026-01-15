@@ -54,3 +54,11 @@ Thumbs.db
 .env.backup
 .env.local
 .env.production
+
+# Temporary/Debug files
+env_temp.txt
+update_env_pricing.py
+create-stripe-products.js
+firebase-debug.log
+PUBLISH_READY_GO_LIVE.md
+*.log

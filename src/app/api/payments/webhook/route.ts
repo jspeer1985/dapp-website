@@ -1,96 +1,61 @@
-// app/api/payment/webhook/route.ts
-
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { headers } from 'next/headers';
-import fs from 'fs/promises';
-import path from 'path';
-import { sendPaymentConfirmationEmail } from '@/lib/email';
+import { connectToDatabase } from '@/lib/mongodb';
+import Generation from '@/models/Generation';
+import { createLogger } from '@/utils/logger';
 
+const logger = createLogger('StripeWebhook');
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-12-15.clover',
 });
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
-const OPTIK_ROOT = process.env.OPTIK_PROJECT_ROOT || 'C:\\optik-dapp-factory';
-
 export async function POST(request: NextRequest) {
+  const body = await request.text();
+  const signature = headers().get('stripe-signature')!;
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+
   try {
-    const body = await request.text();
-    const signature = headers().get('stripe-signature')!;
-    
-    let event: Stripe.Event;
-    
-    try {
-      event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
-    } catch (err: any) {
-      console.error('Webhook signature verification failed:', err.message);
-      return NextResponse.json(
-        { error: 'Invalid signature' },
-        { status: 400 }
-      );
-    }
-    
-    // Handle the event
-    switch (event.type) {
-      case 'checkout.session.completed': {
-        const session = event.data.object as Stripe.Checkout.Session;
-        const jobId = session.metadata?.jobId;
-        
-        if (!jobId) {
-          console.error('No jobId in session metadata');
-          break;
-        }
-        
-        console.log(`Payment completed for job ${jobId}`);
-        
-        // Update job status to "paid"
-        const jobPath = path.join(OPTIK_ROOT, 'jobs', `${jobId}.json`);
-        const jobData = JSON.parse(await fs.readFile(jobPath, 'utf-8'));
-        
-        jobData.paymentStatus = 'paid';
-        jobData.paymentMethod = 'stripe';
-        jobData.stripeSessionId = session.id;
-        jobData.paidAt = new Date().toISOString();
-        
-        await fs.writeFile(jobPath, JSON.stringify(jobData, null, 2));
-        
-        // Send payment confirmation email
-        await sendPaymentConfirmationEmail({
-          customerEmail: jobData.customerEmail,
-          customerName: jobData.customerName,
-          jobId,
-          amount: jobData.totalPrice,
-          paymentMethod: 'stripe',
-          transactionId: session.id,
-        });
-        
-        break;
+    const event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data.object as Stripe.Checkout.Session;
+      const jobId = session.metadata?.jobId;
+
+      if (!jobId) {
+        logger.error({ sessionId: session.id }, 'No jobId in Stripe metadata');
+        return NextResponse.json({ error: 'Missing metadata' }, { status: 400 });
       }
-      
-      case 'checkout.session.expired': {
-        const session = event.data.object as Stripe.Checkout.Session;
-        const jobId = session.metadata?.jobId;
-        
-        if (jobId) {
-          console.log(`Payment session expired for job ${jobId}`);
-          // Optionally update job status
-        }
-        
-        break;
+
+      await connectToDatabase();
+      const generation = await Generation.findOne({ generationId: jobId });
+
+      if (!generation) {
+        logger.error({ jobId }, 'Order record not found during webhook');
+        return NextResponse.json({ error: 'Order not found' }, { status: 404 });
       }
-      
-      default:
-        console.log(`Unhandled event type: ${event.type}`);
+
+      // Update generation status
+      generation.payment.status = 'confirmed';
+      generation.payment.currency = 'USD';
+      generation.payment.amount = (session.amount_total || 0) / 100;
+      generation.status = 'payment_confirmed';
+      generation.timestamps.paymentConfirmed = new Date();
+      await generation.save();
+
+      logger.info({ jobId }, 'Revenue Secured: Stripe payment confirmed');
+
+      // Trigger the background AI generation factory
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+      fetch(`${baseUrl}/api/generations/${jobId}/generate`, {
+        method: 'POST',
+        headers: { 'X-Internal-Request': 'true' }
+      }).catch(err => logger.error({ jobId, err }, 'Failed to auto-trigger AI generation'));
     }
-    
+
     return NextResponse.json({ received: true });
-    
   } catch (error: any) {
-    console.error('Webhook error:', error);
-    return NextResponse.json(
-      { error: 'Webhook handler failed', details: error.message },
-      { status: 500 }
-    );
+    logger.error({ error: error.message }, 'Webhook fulfillment failed');
+    return NextResponse.json({ error: 'Webhook Error' }, { status: 400 });
   }
 }

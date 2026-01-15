@@ -29,16 +29,16 @@ export default function StripePayment({
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    
+
     if (!stripe || !elements) {
       setError('Payment system not loaded');
       return;
     }
-    
+
     setLoading(true);
     setError(null);
     setStatus('processing');
-    
+
     try {
       // Create payment method first
       const { error: pmError, paymentMethod } = await stripe.createPaymentMethod({
@@ -49,7 +49,6 @@ export default function StripePayment({
             name: customerEmail.split('@')[0], // Extract name from email
           },
         },
-      },
       });
 
       if (pmError) {
@@ -70,7 +69,7 @@ export default function StripePayment({
       });
 
       const data = await response.json();
-      
+
       if (!data.success) {
         throw new Error(data.error || 'Failed to create payment');
       }
@@ -78,11 +77,10 @@ export default function StripePayment({
       // Confirm payment
       const { error: confirmError } = await stripe.confirmPayment({
         clientSecret: data.clientSecret,
-        payment_method: paymentMethod.id,
         confirmParams: {
+          payment_method: paymentMethod.id,
           return_url: `${window.location.origin}/success?session_id=${generationId}`,
         },
-      },
       });
 
       if (confirmError) {
@@ -90,7 +88,7 @@ export default function StripePayment({
       }
 
       setStatus('success');
-      
+
       // Trigger generation after successful payment
       setTimeout(() => {
         onComplete();
@@ -124,7 +122,7 @@ export default function StripePayment({
           <div>
             <label className="block text-sm font-medium mb-2">Card Information</label>
             <div className="border rounded-lg p-4 bg-background">
-              <PaymentElement 
+              <PaymentElement
                 options={{
                   layout: 'tabs',
                 }}

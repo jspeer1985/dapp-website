@@ -19,8 +19,8 @@ export default function HowItWorks() {
     },
     {
       icon: Rocket,
-      title: 'Deploy Instantly',
-      description: 'Review, customize, and deploy your dApp to Solana mainnet with just a few clicks.',
+      title: 'Production Ready',
+      description: 'Receive your complete, deployable codebase with one-command launch scripts for Solana mainnet.',
       color: 'text-green-500',
     },
   ];

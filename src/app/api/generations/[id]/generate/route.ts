@@ -145,7 +145,7 @@ export async function POST(
             customerName: generation.customerInfo.fullName,
             jobId: generation.generationId,
             productType: generation.projectType,
-            downloadUrl: `${process.env.NEXT_PUBLIC_APP_URL}/api/download/${generation.downloadInfo.downloadToken}`,
+            downloadUrl: `${process.env.NEXT_PUBLIC_APP_URL}/api/downloads/${generation.downloadInfo.downloadToken}`,
             fileSizeMB: '4.5',
             completedAt: new Date().toISOString(),
           }).catch(err => console.error('Email error (non-critical):', err));

@@ -36,8 +36,8 @@ export async function GET(
   try {
     // Extract client metadata
     const ipAddress = request.headers.get('x-forwarded-for')?.split(',')[0] ||
-                     request.headers.get('x-real-ip') ||
-                     'unknown';
+      request.headers.get('x-real-ip') ||
+      'unknown';
 
     // Connect to database
     await connectToDatabase();
@@ -131,12 +131,12 @@ export async function GET(
       generation.downloadInfo.lastDownloadedAt = new Date();
     }
 
-    // Track download in errors array (repurposing for audit trail)
-    generation.errors.push({
+    // Track download in generationErrors array (repurposing for audit trail)
+    generation.generationErrors.push({
       stage: 'download',
       message: `Download #${generation.downloadInfo.downloadCount} from IP ${ipAddress}`,
       timestamp: new Date(),
-    } as any);
+    });
 
     await generation.save();
 

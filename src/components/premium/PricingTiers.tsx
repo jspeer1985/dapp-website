@@ -80,7 +80,6 @@ export default function PricingTiers() {
                   <div>
                     <div className="mb-2 flex items-baseline gap-2">
                       <span className="text-4xl font-bold">${tier.priceUSD}</span>
-                      <span className="text-muted-foreground">/ {tier.priceSOL} SOL</span>
                     </div>
                     <p className="text-sm text-muted-foreground">One-time payment</p>
                   </div>

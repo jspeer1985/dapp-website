@@ -53,7 +53,7 @@ export class RefundService {
 
       generation.payment.status = 'refunded';
       generation.status = 'refunded';
-      generation.errors.push({
+      generation.generationErrors.push({
         stage: 'refund',
         message: `Refund processed: ${params.reason}`,
         timestamp: new Date(),

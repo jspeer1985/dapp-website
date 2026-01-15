@@ -13,6 +13,8 @@ import { z } from 'zod';
 import { connectToDatabase } from '@/lib/mongodb';
 import Generation from '@/models/Generation';
 import { nanoid } from 'nanoid';
+import { rateLimit } from '@/middleware/rateLimit';
+import { createLogger } from '@/utils/logger';
 
 // Request validation schema
 const optikOrderSchema = z.object({
@@ -49,17 +51,7 @@ const optikOrderSchema = z.object({
 type OptikOrderInput = z.infer<typeof optikOrderSchema>;
 
 // Logger utility
-const logger = {
-  info: (message: string, data?: any) => {
-    console.log(`[OPTIK Integration] ${message}`, data ? JSON.stringify(data, null, 2) : '');
-  },
-  error: (message: string, error: any) => {
-    console.error(`[OPTIK Integration ERROR] ${message}`, error);
-  },
-  warn: (message: string, data?: any) => {
-    console.warn(`[OPTIK Integration WARN] ${message}`, data);
-  },
-};
+const logger = createLogger('OptikOrder');
 
 /**
  * Maps OPTIK product type to Factory project type
@@ -99,9 +91,9 @@ function mapTierToFactory(formData: OptikOrderInput): 'starter' | 'professional'
 function calculateSolAmount(tier: 'starter' | 'professional' | 'enterprise'): number {
   // Get pricing from environment or use defaults
   const pricing = {
-    starter: parseFloat(process.env.NEXT_PUBLIC_STARTER_PRICE_SOL || '1.1'),
-    professional: parseFloat(process.env.NEXT_PUBLIC_PROFESSIONAL_PRICE_SOL || '2.1'),
-    enterprise: parseFloat(process.env.NEXT_PUBLIC_ENTERPRISE_PRICE_SOL || '4.4'),
+    starter: parseFloat(process.env.NEXT_PUBLIC_DAPP_STARTER_PRICE_SOL || '4.5'),
+    professional: parseFloat(process.env.NEXT_PUBLIC_DAPP_PROFESSIONAL_PRICE_SOL || '12.5'),
+    enterprise: parseFloat(process.env.NEXT_PUBLIC_DAPP_ENTERPRISE_PRICE_SOL || '35.0'),
   };
 
   return pricing[tier];
@@ -134,7 +126,21 @@ export async function POST(request: NextRequest) {
   const requestId = nanoid(16);
   const startTime = Date.now();
 
-  logger.info(`New OPTIK order received [${requestId}]`);
+  // 0. Rate limiting
+  const rateLimitResult = rateLimit(request, {
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    maxRequests: 5, // Tight limit for order submission
+  });
+
+  if (!rateLimitResult.allowed) {
+    logger.warn({ ip: request.headers.get('x-forwarded-for') }, 'Rate limit exceeded for order submission');
+    return NextResponse.json(
+      { success: false, error: 'Too many requests. Please try again in 15 minutes.' },
+      { status: 429 }
+    );
+  }
+
+  logger.info({ requestId }, `New OPTIK order received`);
 
   try {
     // 1. Parse and validate request
@@ -149,8 +155,8 @@ export async function POST(request: NextRequest) {
 
     // 2. Extract client metadata for security tracking
     const ipAddress = request.headers.get('x-forwarded-for')?.split(',')[0] ||
-                     request.headers.get('x-real-ip') ||
-                     'unknown';
+      request.headers.get('x-real-ip') ||
+      'unknown';
     const userAgent = request.headers.get('user-agent') || 'unknown';
 
     // 3. Connect to database
@@ -214,9 +220,8 @@ export async function POST(request: NextRequest) {
       } : undefined,
 
       payment: {
-        amount: paymentAmount,
-        currency: 'SOL',
-        transactionSignature: '', // Will be filled by payment verification
+        amount: validatedData.meta.totalPrice,
+        currency: 'USD',
         status: 'pending',
         timestamp: new Date(),
         confirmations: 0,
@@ -237,7 +242,7 @@ export async function POST(request: NextRequest) {
         created: new Date(),
       },
 
-      errors: [],
+      generationErrors: [],
       analytics: {},
     });
 
@@ -247,7 +252,7 @@ export async function POST(request: NextRequest) {
       generationId,
       optikJobId,
       tier,
-      paymentAmount,
+      usdPrice: validatedData.meta.totalPrice,
     });
 
     // 7. Store order mapping
@@ -258,9 +263,9 @@ export async function POST(request: NextRequest) {
       deliveryWallet: validatedData.customerInfo.deliveryWallet,
       productType: validatedData.productType,
       totalPrice: validatedData.meta.totalPrice,
-      currency: validatedData.meta.currency,
-      treasuryWallet,
-      paymentAmount,
+      currency: 'USD',
+      treasuryWallet: 'STRIPE_MANAGED',
+      paymentAmount: validatedData.meta.totalPrice,
       timestamp: new Date(),
     });
 
@@ -271,15 +276,14 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      jobId: generationId, // OPTIK will use this as the jobId
-      optikJobId, // Internal tracking ID
-      treasuryWallet,
-      paymentAmount,
-      paymentCurrency: 'SOL',
+      jobId: generationId,
+      optikJobId,
+      paymentCurrency: 'USD',
+      totalPrice: validatedData.meta.totalPrice,
       tier,
       status: 'pending_payment',
       estimatedCompletionMinutes: tier === 'enterprise' ? 90 : tier === 'professional' ? 60 : 30,
-      message: 'Order created successfully. Please complete payment to begin generation.',
+      message: 'Order created successfully. Proceeding to Stripe checkout.',
     });
 
   } catch (error) {
