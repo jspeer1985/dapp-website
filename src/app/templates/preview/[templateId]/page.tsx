@@ -8,6 +8,374 @@ import { ArrowLeft, Star, Shield, Zap, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 
 const templateData: Record<string, any> = {
+    // DeFi Templates (5 total)
+    'defi-yield-farm': {
+        title: 'DeFi Yield Farm',
+        description: 'Multi-pool yield farming protocol with auto-compounding, governance tokens, and analytics.',
+        category: 'DeFi',
+        price: '$299',
+        rating: 4.9,
+        reviews: 156,
+        audited: true,
+        features: ['Auto-compounding', 'Multi-pool Support', 'Governance Token', 'Analytics Dashboard'],
+        image: '🌾',
+        codePreview: {
+            'Smart Contract': `// Yield Farming Contract
+import { Program, web3 } from '@project-serum/anchor';
+
+export class YieldFarm {
+  static async stake(
+    ctx: web3.Context,
+    poolId: number,
+    amount: number
+  ) {
+    const pool = await this.getPool(ctx, poolId);
+    await pool.deposit(ctx.accounts.user, amount);
+    
+    const rewards = await this.calculateRewards(ctx, poolId, amount);
+    return rewards;
+  }
+}`,
+            'Frontend Component': `// Farming Interface
+import { useConnection } from '@solana/wallet-adapter-react';
+
+export default function YieldFarm() {
+  const handleStake = async (poolId, amount) => {
+    const tx = await createStakeTransaction(poolId, amount);
+    await sendTransaction(tx);
+  };
+
+  return <div className="yield-farm">{/* Staking UI */}</div>;
+}`
+        }
+    },
+    'defi-dex-exchange': {
+        title: 'DEX Exchange',
+        description: 'Decentralized exchange with limit orders, order book, and advanced trading features.',
+        category: 'DeFi',
+        price: '$349',
+        rating: 4.7,
+        reviews: 78,
+        audited: true,
+        features: ['Limit Orders', 'Order Book', 'Advanced Trading', 'Liquidity Pools'],
+        image: '💱',
+        codePreview: {
+            'Smart Contract': `// DEX Exchange Contract
+export class DEXExchange {
+  static async createLimitOrder(
+    ctx: web3.Context,
+    tokenA: string,
+    tokenB: string,
+    amount: number,
+    price: number
+  ) {
+    const order = await this.placeOrder(ctx, tokenA, tokenB, amount, price, 'limit');
+    return order;
+  }
+}`,
+            'Frontend Component': `// DEX Trading Interface
+import { useConnection } from '@solana/wallet-adapter-react';
+
+export default function DEXExchange() {
+  const handleTrade = async (tokenA, tokenB, amount, price) => {
+    const tx = await createTradeTransaction(tokenA, tokenB, amount, price);
+    await sendTransaction(tx);
+  };
+
+  return <div className="dex-exchange">{/* Trading UI */}</div>;
+}`
+        }
+    },
+    'defi-staking-pools': {
+        title: 'Staking Pools Platform',
+        description: 'Multi-token staking platform with flexible rewards, lock periods, and governance.',
+        category: 'DeFi',
+        price: '$279',
+        rating: 4.6,
+        reviews: 61,
+        audited: true,
+        features: ['Multi-token Staking', 'Flexible Rewards', 'Lock Periods', 'Governance Integration'],
+        image: '🏊',
+        codePreview: {
+            'Smart Contract': `// Staking Pools Contract
+export class StakingPools {
+  static async createPool(
+    ctx: web3.Context,
+    rewardToken: string,
+    apr: number,
+    lockPeriod: number
+  ) {
+    const pool = await this.initializePool(ctx, rewardToken, apr, lockPeriod);
+    return pool;
+  }
+}`,
+            'Frontend Component': `// Staking Interface
+import { useWallet } from '@solana/wallet-adapter-react';
+
+export default function StakingPools() {
+  const handleStake = async (poolId, amount) => {
+    const tx = await createStakeTransaction(poolId, amount);
+    await sendTransaction(tx);
+  };
+
+  return <div className="staking-pools">{/* Staking UI */}</div>;
+}`
+        }
+    },
+    'defi-lending-protocol': {
+        title: 'Lending Protocol',
+        description: 'Decentralized lending protocol with collateralized loans and interest rates.',
+        category: 'DeFi',
+        price: '$389',
+        rating: 4.7,
+        reviews: 73,
+        audited: true,
+        features: ['Collateralized Loans', 'Interest Rates', 'Liquidation Protection', 'Risk Management'],
+        image: '💸',
+        codePreview: {
+            'Smart Contract': `// Lending Protocol Contract
+export class LendingProtocol {
+  static async depositCollateral(
+    ctx: web3.Context,
+    token: string,
+    amount: number
+  ) {
+    const deposit = await this.lockCollateral(ctx, token, amount);
+    return deposit;
+  }
+}`,
+            'Frontend Component': `// Lending Interface
+import { useConnection } from '@solana/wallet-adapter-react';
+
+export default function LendingProtocol() {
+  const handleBorrow = async (collateral, borrowAmount) => {
+    const tx = await createBorrowTransaction(collateral, borrowAmount);
+    await sendTransaction(tx);
+  };
+
+  return <div className="lending-protocol">{/* Lending UI */}</div>;
+}`
+        }
+    },
+    'defi-cross-chain-bridge': {
+        title: 'Cross-Chain Bridge',
+        description: 'Cross-chain bridge protocol with multi-asset support and security features.',
+        category: 'DeFi',
+        price: '$449',
+        rating: 4.8,
+        reviews: 54,
+        audited: true,
+        features: ['Multi-Asset Bridge', 'Security Features', 'Cross-Chain Transfers', 'Validator Network'],
+        image: '🌉',
+        codePreview: {
+            'Smart Contract': `// Cross-Chain Bridge Contract
+export class CrossChainBridge {
+  static async initiateTransfer(
+    ctx: web3.Context,
+    targetChain: string,
+    token: string,
+    amount: number,
+    recipient: string
+  ) {
+    const transfer = await this.lockTokens(ctx, token, amount, targetChain, recipient);
+    return transfer;
+  }
+}`,
+            'Frontend Component': `// Bridge Interface
+import { useConnection } from '@solana/wallet-adapter-react';
+
+export default function CrossChainBridge() {
+  const handleBridge = async (targetChain, token, amount, recipient) => {
+    const tx = await createBridgeTransaction(targetChain, token, amount, recipient);
+    await sendTransaction(tx);
+  };
+
+  return <div className="cross-chain-bridge">{/* Bridge UI */}</div>;
+}`
+        }
+    },
+
+    // NFT Templates (5 total)
+    'nft-marketplace': {
+        title: 'NFT Marketplace',
+        description: 'Complete NFT marketplace with auctions, instant buy, royalties, and collection launchpad.',
+        category: 'NFT',
+        price: '$199',
+        rating: 4.7,
+        reviews: 89,
+        audited: true,
+        features: ['Auctions & Fixed Price', 'Creator Royalties', 'Collection Launchpad', 'Activity Feed'],
+        image: '🖼️',
+        codePreview: {
+            'Smart Contract': `// NFT Marketplace Contract
+import { MetadataProgram } from '@metaplex-foundation/mpl-token-metadata';
+
+export class NFTMarketplace {
+  static async listNFT(
+    ctx: web3.Context,
+    nftMint: string,
+    price: number
+  ) {
+    const listing = await this.createListing(ctx, nftMint, price);
+    return listing;
+  }
+}`,
+            'Frontend Component': `// NFT Gallery Component
+import { useWallet } from '@solana/wallet-adapter-react';
+
+export default function NFTGallery() {
+  const handlePurchase = async (listingId) => {
+    const tx = await createPurchaseTransaction(listingId);
+    await sendTransaction(tx);
+  };
+
+  return <div className="nft-gallery">{/* NFT Gallery UI */}</div>;
+}`
+        }
+    },
+    'nft-auction-house': {
+        title: 'NFT Auction House',
+        description: 'Advanced auction platform with bidding wars, reserve prices, and timed auctions.',
+        category: 'NFT',
+        price: '$249',
+        rating: 4.6,
+        reviews: 67,
+        audited: true,
+        features: ['Timed Auctions', 'Reserve Prices', 'Bidding Wars', 'Auction History'],
+        image: '🏛️',
+        codePreview: {
+            'Smart Contract': `// NFT Auction Contract
+export class NFTAuctionHouse {
+  static async createAuction(
+    ctx: web3.Context,
+    nftMint: string,
+    reservePrice: number,
+    duration: number
+  ) {
+    const auction = await this.initializeAuction(ctx, nftMint, reservePrice, duration);
+    return auction;
+  }
+}`,
+            'Frontend Component': `// Auction Interface
+import { useWallet } from '@solana/wallet-adapter-react';
+
+export default function NFTAuctionHouse() {
+  const handleBid = async (auctionId, amount) => {
+    const tx = await createBidTransaction(auctionId, amount);
+    await sendTransaction(tx);
+  };
+
+  return <div className="nft-auction">{/* Auction UI */}</div>;
+}`
+        }
+    },
+    'nft-staking-platform': {
+        title: 'NFT Staking Platform',
+        description: 'Stake your NFTs to earn rewards, governance tokens, and exclusive benefits.',
+        category: 'NFT',
+        price: '$179',
+        rating: 4.5,
+        reviews: 45,
+        audited: true,
+        features: ['NFT Staking', 'Reward Distribution', 'Governance Access', 'Exclusive Benefits'],
+        image: '🎯',
+        codePreview: {
+            'Smart Contract': `// NFT Staking Contract
+export class NFTStaking {
+  static async stakeNFT(
+    ctx: web3.Context,
+    nftMint: string,
+    duration: number
+  ) {
+    const stake = await this.lockNFT(ctx, nftMint, duration);
+    return stake;
+  }
+}`,
+            'Frontend Component': `// NFT Staking Interface
+import { useWallet } from '@solana/wallet-adapter-react';
+
+export default function NFTStakingPlatform() {
+  const handleStake = async (nftMint, duration) => {
+    const tx = await createStakeTransaction(nftMint, duration);
+    await sendTransaction(tx);
+  };
+
+  return <div className="nft-staking">{/* Staking UI */}</div>;
+}`
+        }
+    },
+    'nft-gaming-assets': {
+        title: 'NFT Gaming Assets',
+        description: 'Gaming NFT platform with in-game assets, character skins, and virtual items.',
+        category: 'NFT',
+        price: '$229',
+        rating: 4.7,
+        reviews: 82,
+        audited: true,
+        features: ['In-Game Assets', 'Character Skins', 'Virtual Items', 'Game Integration'],
+        image: '🎮',
+        codePreview: {
+            'Smart Contract': `// Gaming NFT Contract
+export class GamingNFT {
+  static async mintGameAsset(
+    ctx: web3.Context,
+    assetType: string,
+    rarity: string,
+    metadata: any
+  ) {
+    const asset = await this.createGameAsset(ctx, assetType, rarity, metadata);
+    return asset;
+  }
+}`,
+            'Frontend Component': `// Gaming NFT Interface
+import { useWallet } from '@solana/wallet-adapter-react';
+
+export default function GamingNFTAssets() {
+  const handleMint = async (assetType, rarity, metadata) => {
+    const tx = await createMintTransaction(assetType, rarity, metadata);
+    await sendTransaction(tx);
+  };
+
+  return <div className="gaming-nft">{/* Gaming NFT UI */}</div>;
+}`
+        }
+    },
+    'nft-music-platform': {
+        title: 'NFT Music Platform',
+        description: 'Music NFT marketplace for artists to sell songs, albums, and exclusive content.',
+        category: 'NFT',
+        price: '$199',
+        rating: 4.4,
+        reviews: 38,
+        audited: true,
+        features: ['Music NFTs', 'Artist Royalties', 'Exclusive Content', 'Fan Engagement'],
+        image: '🎵',
+        codePreview: {
+            'Smart Contract': `// Music NFT Contract
+export class MusicNFT {
+  static async mintMusicNFT(
+    ctx: web3.Context,
+    artist: string,
+    songTitle: string,
+    audioUrl: string
+  ) {
+    const musicNFT = await this.createMusicNFT(ctx, artist, songTitle, audioUrl);
+    return musicNFT;
+  }
+}`,
+            'Frontend Component': `// Music NFT Interface
+import { useWallet } from '@solana/wallet-adapter-react';
+
+export default function MusicNFTPlatform() {
+  const handleMint = async (artist, songTitle, audioUrl) => {
+    const tx = await createMusicMintTransaction(artist, songTitle, audioUrl);
+    await sendTransaction(tx);
+  };
+
+  return <div className="music-nft">{/* Music NFT UI */}</div>;
+}`
+        }
+    },
     'uniswap-v3-clone': {
         title: 'DeFi Swap Protocol',
         description: 'Full-featured AMM DEX with concentrated liquidity, farming, and router. Includes React frontend.',
