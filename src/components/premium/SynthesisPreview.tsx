@@ -111,8 +111,8 @@ export default function SynthesisPreview() {
           </div>
           <div className="w-full bg-slate-800 rounded-full h-2 mb-6">
             <div
-              className="bg-gradient-to-r from-purple-500 to-pink-500 h-full rounded-full transition-all duration-1000"
-              style={{ width: `${(data.minted / 5555) * 100}%` }}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 h-full rounded-full transition-all duration-1000 progress-bar-fill"
+              style={{ '--progress-width': `${(data.minted / 5555) * 100}%` } as React.CSSProperties}
             ></div>
           </div>
           <button

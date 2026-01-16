@@ -53,6 +53,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
@@ -88,6 +89,10 @@
 
   .card {
     @apply bg-white/5 backdrop-blur-sm border border-white/10;
+  }
+
+  .progress-bar-fill {
+    width: var(--progress-width, 0%);
   }
 }
 

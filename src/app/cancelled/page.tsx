@@ -33,7 +33,7 @@ export default function CancelledPage() {
                 )}
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Link href="/generate">
+                    <Link href="/factory">
                         <Button size="lg" className="w-full sm:w-auto gap-2">
                             <RefreshCcw className="w-5 h-5" />
                             Try Again

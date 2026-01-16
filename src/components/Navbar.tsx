@@ -25,28 +25,28 @@ export default function Navbar() {
             Home
           </Link>
           <Link
-            href="/generate"
-            className="text-sm font-medium transition-colors hover:text-primary"
-          >
-            Advanced
-          </Link>
-          <Link
             href="/factory"
             className="text-sm font-medium transition-colors hover:text-primary"
           >
-            Quick Start
+            Create dApp
+          </Link>
+          <Link
+            href="/templates"
+            className="text-sm font-medium transition-colors hover:text-primary"
+          >
+            Templates
+          </Link>
+          <Link
+            href="/docs"
+            className="text-sm font-medium transition-colors hover:text-primary"
+          >
+            Docs
           </Link>
           <Link
             href="/terms"
             className="text-sm font-medium transition-colors hover:text-primary"
           >
             Terms
-          </Link>
-          <Link
-            href="/launch"
-            className="text-sm font-medium transition-colors hover:text-primary"
-          >
-            Launch
           </Link>
           <WalletMultiButton className="!bg-primary hover:!bg-primary/90" />
         </div>

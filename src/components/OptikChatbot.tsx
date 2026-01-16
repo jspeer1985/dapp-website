@@ -112,6 +112,7 @@ export default function OptikChatbot() {
                             <button
                                 onClick={() => setIsOpen(false)}
                                 className="text-white hover:bg-white/20 rounded-lg p-1 transition-colors"
+                                aria-label="Close chat"
                             >
                                 <X className="w-5 h-5" />
                             </button>
@@ -190,6 +191,7 @@ export default function OptikChatbot() {
                                     onClick={handleSend}
                                     disabled={!input.trim() || isLoading}
                                     className="bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl px-4 py-2 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+                                    aria-label="Send message"
                                 >
                                     <Send className="w-5 h-5" />
                                 </button>
@@ -206,6 +208,7 @@ export default function OptikChatbot() {
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full p-4 shadow-2xl hover:scale-110 transition-transform duration-200 relative group"
+                aria-label={isOpen ? "Close chat assistant" : "Open chat assistant"}
             >
                 {isOpen ? (
                     <X className="w-6 h-6" />
