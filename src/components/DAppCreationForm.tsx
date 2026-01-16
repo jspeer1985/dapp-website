@@ -1,7 +1,8 @@
 // app/components/DAppCreationForm.tsx
 'use client';
 
-import { useState } from 'react';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CreditCard } from 'lucide-react';
 import { getTierPrice, getTokenPrice, getDAppPrice, getBundlePrice, getTierInfo } from '@/lib/pricing';
@@ -20,9 +21,9 @@ interface FormData {
     totalSupply: string;
     decimals: number;
     initialMintRecipient: string;
-    buyTax?: number;
-    sellTax?: number;
-    maxWalletPercentage?: number;
+    buyTax: number;
+    sellTax: number;
+    maxWalletPercentage: number;
   };
   dappInfo: {
     projectName: string;
@@ -30,25 +31,26 @@ interface FormData {
     brandingTheme: 'cyberpunk' | 'minimal' | 'professional' | 'gaming';
     primaryColor: string;
     supportedWallets: string[];
-    stakingEnabled?: boolean;
-    stakingAPY?: number;
+    stakingEnabled: boolean;
+    stakingAPY: number;
   };
   liquidityPool: {
     enabled: boolean;
     desiredLPSize?: number;
-    pairToken?: 'SOL' | 'USDC' | 'USDT';
-    dexPlatform?: 'raydium' | 'orca' | 'jupiter';
+    pairToken: 'SOL' | 'USDC' | 'USDT';
+    dexPlatform: 'raydium' | 'orca' | 'jupiter';
   };
   customerInfo: {
     fullName: string;
     email: string;
-    telegramHandle?: string;
+    telegramHandle: string;
     deliveryWallet: string;
     paymentMethod?: 'stripe';
   };
 }
 
 export default function DAppCreationForm() {
+  const { publicKey } = useWallet();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
     productType: 'token-and-dapp',
@@ -61,6 +63,9 @@ export default function DAppCreationForm() {
       totalSupply: '1000000000',
       decimals: 9,
       initialMintRecipient: '',
+      buyTax: 0,
+      sellTax: 0,
+      maxWalletPercentage: 2,
     },
     dappInfo: {
       projectName: '',
@@ -68,16 +73,39 @@ export default function DAppCreationForm() {
       brandingTheme: 'cyberpunk',
       primaryColor: '#00D9FF',
       supportedWallets: ['phantom', 'solflare'],
+      stakingEnabled: false,
+      stakingAPY: 12,
     },
     liquidityPool: {
       enabled: false,
+      pairToken: 'SOL',
+      dexPlatform: 'raydium',
     },
     customerInfo: {
       fullName: '',
       email: '',
       deliveryWallet: '',
+      telegramHandle: '',
     },
   });
+
+  // Auto-fill wallet address if connected
+  useEffect(() => {
+    if (publicKey) {
+      const address = publicKey.toString();
+      setFormData(prev => ({
+        ...prev,
+        tokenInfo: {
+          ...prev.tokenInfo,
+          initialMintRecipient: prev.tokenInfo.initialMintRecipient || address
+        },
+        customerInfo: {
+          ...prev.customerInfo,
+          deliveryWallet: prev.customerInfo.deliveryWallet || address // Only auto-fill if empty
+        }
+      }));
+    }
+  }, [publicKey]);
 
   const [submitting, setSubmitting] = useState(false);
   const [jobId, setJobId] = useState<string | null>(null);
@@ -108,6 +136,10 @@ export default function DAppCreationForm() {
   const totalPrice = calculatePrice() + calculateLPFee();
 
   const handleSubmit = async () => {
+    if (!formData.customerInfo.deliveryWallet) {
+      alert("Please enter a delivery wallet address to continue.");
+      return;
+    }
     setSubmitting(true);
 
     try {
@@ -154,7 +186,8 @@ export default function DAppCreationForm() {
       }
 
       const newId = createResult.generationId;
-      setJobId(newId);
+      // Do NOT set jobId state here, or it will switch UI to "Success/Tracking" view
+      // setJobId(newId);
 
       // Handle Stripe payment (Sole payment method)
       const stripeResponse = await fetch('/api/payments/create-checkout', {
@@ -175,7 +208,8 @@ export default function DAppCreationForm() {
         window.location.href = stripeResult.url;
         return;
       } else {
-        throw new Error('Failed to start Stripe checkout');
+        console.error('Stripe error:', stripeResult);
+        throw new Error(stripeResult.details || stripeResult.error || 'Failed to start Stripe checkout');
       }
 
     } catch (error: any) {
@@ -790,6 +824,7 @@ export default function DAppCreationForm() {
                     <div>
                       <label className="block text-white font-bold mb-2">Full Name</label>
                       <input
+                        required
                         type="text"
                         value={formData.customerInfo.fullName}
                         onChange={(e) => setFormData({
@@ -804,6 +839,7 @@ export default function DAppCreationForm() {
                     <div>
                       <label className="block text-white font-bold mb-2">Email</label>
                       <input
+                        required
                         type="email"
                         value={formData.customerInfo.email}
                         onChange={(e) => setFormData({
