@@ -4,7 +4,7 @@ import { useParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Star, Shield, Zap, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Star, Shield, Zap, CheckCircle, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 
 const templateData: Record<string, any> = {
@@ -604,6 +604,30 @@ export default function TemplatePreview() {
     const templateId = params.templateId as string;
     const template = templateData[templateId];
 
+    const handlePurchase = async () => {
+        try {
+            // Create Stripe checkout session
+            const response = await fetch('/api/stripe/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    templateId: templateId,
+                    templateName: template.title,
+                    price: parseInt(template.price.replace('$', '')),
+                }),
+            });
+
+            const session = await response.json();
+            
+            // Redirect to Stripe Checkout
+            window.location.href = session.url;
+        } catch (error) {
+            console.error('Purchase failed:', error);
+        }
+    };
+
     if (!template) {
         return (
             <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
@@ -751,9 +775,10 @@ export default function TemplatePreview() {
                                 <Button 
                                     size="lg" 
                                     className="bg-gradient-to-r from-purple-600 to-blue-600 hover:opacity-90"
-                                    asChild
+                                    onClick={handlePurchase}
                                 >
-                                    <Link href={`/templates?clone=${templateId}`}>Clone This Template</Link>
+                                    <ShoppingCart className="w-4 h-4 mr-2" />
+                                    Buy Now - {template.price}
                                 </Button>
                             </div>
                         </CardContent>
