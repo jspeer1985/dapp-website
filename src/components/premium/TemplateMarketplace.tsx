@@ -16,7 +16,10 @@ import {
   Code,
   Zap,
   Shield,
-  TrendingUp
+  TrendingUp,
+  Globe,
+  Users,
+  Rocket
 } from 'lucide-react';
 import Link from 'next/link';
 
