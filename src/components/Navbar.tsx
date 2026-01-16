@@ -25,8 +25,9 @@ export default function Navbar() {
     { name: 'Home', href: '/' },
     { name: 'Create dApp', href: '/factory' },
     { name: 'Templates', href: '/templates' },
+    { name: 'Dashboard', href: '/dashboard' },
+    { name: 'Pricing', href: '/#pricing' },
     { name: 'Docs', href: '/docs' },
-    { name: 'Terms', href: '/terms' },
   ];
 
   return (
