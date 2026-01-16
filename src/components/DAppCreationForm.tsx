@@ -140,6 +140,14 @@ export default function DAppCreationForm() {
       alert("Please enter a delivery wallet address to continue.");
       return;
     }
+    if (!formData.customerInfo.fullName || !formData.customerInfo.fullName.trim()) {
+      alert("Please enter your full name.");
+      return;
+    }
+    if (!formData.customerInfo.email || !formData.customerInfo.email.trim()) {
+      alert("Please enter a valid email address.");
+      return;
+    }
     setSubmitting(true);
 
     try {
