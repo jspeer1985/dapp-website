@@ -29,8 +29,8 @@ export default function MasterHero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            Build Web3{' '}
-            <span className="text-gradient">Faster</span>
+            Accelerate Web3{' '}
+            <span className="text-gradient">Development</span>
           </motion.h1>
 
           <motion.p
@@ -39,10 +39,19 @@ export default function MasterHero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            Generate production-grade dApp and token architectures in minutes.
+            Generate professional-grade dApp and token scaffolds in minutes.
             <br />
-            <span className="text-primary font-semibold">Optik is an automated Web3 application factory.</span>
+            <span className="text-primary font-semibold">Production-quality templates that accelerate your development.</span>
           </motion.p>
+
+          <motion.div
+            className="mb-6 rounded-lg border border-yellow-500/30 bg-yellow-500/10 p-3 text-sm text-yellow-200"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.25 }}
+          >
+            ⚠️ <strong>Important:</strong> Generated code requires security review and customization before mainnet deployment
+          </motion.div>
 
           <motion.div
             className="flex flex-col items-center justify-center gap-4 sm:flex-row"

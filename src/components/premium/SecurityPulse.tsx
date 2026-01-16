@@ -22,8 +22,8 @@ export default function SecurityPulse() {
               Real-Time Security Scanning
             </h2>
             <p className="text-lg text-muted-foreground">
-              Every generated dApp is automatically analyzed for security vulnerabilities
-              and compliance issues before deployment.
+              Every generated dApp undergoes automated static analysis to detect common
+              vulnerabilities and ensure best-practice patterns.
             </p>
           </motion.div>
         </div>
@@ -38,41 +38,41 @@ export default function SecurityPulse() {
             <Card className="h-full">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Shield className="h-5 w-5 text-green-500" />
-                  Security Score
+                  <Shield className="h-5 w-5 text-blue-500" />
+                  Code Analysis
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div>
                     <div className="mb-2 flex items-center justify-between">
-                      <span className="text-sm font-medium">Overall Safety</span>
-                      <span className="text-2xl font-bold text-green-500">92/100</span>
+                      <span className="text-sm font-medium">Static Analysis Status</span>
+                      <span className="text-sm font-bold text-yellow-500">Review Required</span>
                     </div>
-                    <Progress value={92} className="h-2" />
+                    <Progress value={100} className="h-2" />
                   </div>
 
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
                       <span className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-500" />
-                        Code Quality
+                        Pattern Matching
                       </span>
-                      <Badge variant="success">Excellent</Badge>
+                      <Badge variant="outline">Completed</Badge>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-500" />
-                        Vulnerability Check
+                        Basic Sanitization
                       </span>
-                      <Badge variant="success">Passed</Badge>
+                      <Badge variant="outline">Implemented</Badge>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-green-500" />
-                        Compliance
+                        <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                        Manual Audit
                       </span>
-                      <Badge variant="success">Verified</Badge>
+                      <Badge variant="destructive">Pending</Badge>
                     </div>
                   </div>
                 </div>
@@ -96,31 +96,31 @@ export default function SecurityPulse() {
               <CardContent>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
-                    <div className="mt-0.5 h-2 w-2 rounded-full bg-green-500 animate-pulse-glow" />
+                    <div className="mt-0.5 h-2 w-2 rounded-full bg-blue-500 animate-pulse-glow" />
                     <div className="flex-1">
-                      <p className="text-sm font-medium">XSS Protection</p>
-                      <p className="text-xs text-muted-foreground">No vulnerable patterns detected</p>
+                      <p className="text-sm font-medium">Input Validation</p>
+                      <p className="text-xs text-muted-foreground">Standard sanitization patterns applied</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <div className="mt-0.5 h-2 w-2 rounded-full bg-green-500 animate-pulse-glow" />
+                    <div className="mt-0.5 h-2 w-2 rounded-full bg-blue-500 animate-pulse-glow" />
                     <div className="flex-1">
-                      <p className="text-sm font-medium">SQL Injection Guard</p>
-                      <p className="text-xs text-muted-foreground">All queries parameterized</p>
+                      <p className="text-sm font-medium">Access Control</p>
+                      <p className="text-xs text-muted-foreground">RBAC templates included</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <div className="mt-0.5 h-2 w-2 rounded-full bg-green-500 animate-pulse-glow" />
+                    <div className="mt-0.5 h-2 w-2 rounded-full bg-blue-500 animate-pulse-glow" />
                     <div className="flex-1">
-                      <p className="text-sm font-medium">Dependency Audit</p>
-                      <p className="text-xs text-muted-foreground">All packages verified safe</p>
+                      <p className="text-sm font-medium">Dependency Scan</p>
+                      <p className="text-xs text-muted-foreground">Known vulnerability check</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <div className="mt-0.5 h-2 w-2 rounded-full bg-green-500 animate-pulse-glow" />
+                    <div className="mt-0.5 h-2 w-2 rounded-full bg-blue-500 animate-pulse-glow" />
                     <div className="flex-1">
-                      <p className="text-sm font-medium">Smart Contract Review</p>
-                      <p className="text-xs text-muted-foreground">No security flaws found</p>
+                      <p className="text-sm font-medium">Best Practices</p>
+                      <p className="text-xs text-muted-foreground">Standard solana patterns used</p>
                     </div>
                   </div>
                 </div>

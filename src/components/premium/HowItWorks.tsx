@@ -7,20 +7,20 @@ export default function HowItWorks() {
   const steps = [
     {
       icon: FileText,
-      title: 'Describe Your dApp',
+      title: 'Describe Your Project',
       description: 'Tell us what you want to build. Our AI understands natural language and technical requirements.',
       color: 'text-blue-500',
     },
     {
       icon: Cpu,
-      title: 'AI Generates Code',
-      description: 'Advanced AI generates production-ready code, complete with tests, documentation, and best practices.',
+      title: 'AI Generates Scaffold',
+      description: 'Advanced AI generates professional code templates with best-practice patterns, tests, and documentation.',
       color: 'text-purple-500',
     },
     {
       icon: Rocket,
-      title: 'Production Ready',
-      description: 'Receive your complete, deployable codebase with one-command launch scripts for Solana mainnet.',
+      title: 'Customize & Deploy',
+      description: 'Receive your complete scaffold with deployment scripts. Review, customize, and audit before mainnet launch.',
       color: 'text-green-500',
     },
   ];

@@ -6,19 +6,32 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
 
 export default function SynthesisPreview() {
-  const codeExample = `// Generated Solana dApp Component
+  const codeExample = `// Generated Solana dApp Template
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Connection, PublicKey } from '@solana/web3.js';
 
+// TODO: Configure your network endpoint in .env
+const NETWORK = process.env.NEXT_PUBLIC_SOLANA_RPC || 'devnet';
+
 export function TokenMinter() {
   const { publicKey, sendTransaction } = useWallet();
-  const connection = new Connection('https://api.mainnet-beta.solana.com');
+  const connection = new Connection(NETWORK);
 
   const mintToken = async () => {
-    // AI-generated minting logic
-    const transaction = await createMintTransaction();
-    const signature = await sendTransaction(transaction, connection);
-    return signature;
+    if (!publicKey) throw new Error('Wallet not connected');
+
+    try {
+      // TODO: Implement custom minting logic for your specific use case
+      // This is a standard scaffold pattern
+      const transaction = await createMintTransaction(publicKey);
+      const signature = await sendTransaction(transaction, connection);
+      
+      return signature;
+    } catch (error) {
+      console.error('Minting failed:', error);
+      // TODO: Add user-facing error notification
+      throw error;
+    }
   };
 
   return (
@@ -42,10 +55,10 @@ export function TokenMinter() {
           >
             <Code2 className="mx-auto mb-4 h-12 w-12 text-primary" />
             <h2 className="mb-4 text-3xl font-bold md:text-4xl">
-              Production-Ready Code
+              Professional Code Scaffolding
             </h2>
             <p className="text-lg text-muted-foreground">
-              Generate clean, documented, and optimized code following industry best practices
+              Get a solid foundation with clean, documented code patterns ready for your customization
             </p>
           </motion.div>
         </div>
