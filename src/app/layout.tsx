@@ -4,6 +4,7 @@ import './globals.css'
 import { WalletContextProvider } from '@/components/WalletContextProvider'
 import Navbar from '@/components/Navbar'
 import NetworkBackground from '@/components/NetworkBackground'
+import OptikChatbot from '@/components/OptikChatbot'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -25,6 +26,7 @@ export default function RootLayout({
           <div className="relative z-10 flex flex-col min-h-screen">
             <Navbar />
             <main className="flex-grow">{children}</main>
+            <OptikChatbot />
           </div>
         </WalletContextProvider>
       </body>

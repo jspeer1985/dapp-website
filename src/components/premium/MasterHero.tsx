@@ -65,9 +65,11 @@ export default function MasterHero() {
                 Generate Now
               </Button>
             </Link>
-            <Button size="lg" variant="outline">
-              Learn More
-            </Button>
+            <Link href="#preview">
+              <Button size="lg" variant="outline">
+                View Example dApps
+              </Button>
+            </Link>
           </motion.div>
 
           <motion.div
