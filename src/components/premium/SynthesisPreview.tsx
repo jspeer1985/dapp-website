@@ -7,7 +7,28 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
 
 export default function SynthesisPreview() {
-  const [activeTheme, setActiveTheme] = React.useState<'defi' | 'nft' | 'staking'>('defi');
+  const [interactionState, setInteractionState] = React.useState<'idle' | 'loading' | 'success'>('idle');
+  const [data, setData] = React.useState({
+    solBalance: 24.5,
+    tokenBalance: 0.00,
+    minted: 4021,
+    staked: 244.2
+  });
+
+  const handleSimulate = (type: 'swap' | 'mint' | 'stake') => {
+    setInteractionState('loading');
+    setTimeout(() => {
+      setInteractionState('success');
+      setData(prev => ({
+        ...prev,
+        solBalance: type === 'swap' ? prev.solBalance - 1 : prev.solBalance - 0.5,
+        tokenBalance: type === 'swap' ? prev.tokenBalance + 142.5 : prev.tokenBalance,
+        minted: type === 'mint' ? prev.minted + 1 : prev.minted,
+        staked: type === 'stake' ? prev.staked + 100 : prev.staked
+      }));
+      setTimeout(() => setInteractionState('idle'), 2000);
+    }, 1500);
+  };
 
   const themes = {
     defi: {
@@ -23,7 +44,7 @@ export default function SynthesisPreview() {
             <div className="bg-slate-800 p-4 rounded-lg">
               <div className="flex justify-between text-sm mb-2">
                 <span className="text-slate-400">You pay</span>
-                <span className="text-slate-400">Balance: 24.5 SOL</span>
+                <span className="text-slate-400">Balance: {data.solBalance.toFixed(2)} SOL</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-2xl font-bold text-white">1.0</span>
@@ -35,13 +56,13 @@ export default function SynthesisPreview() {
             </div>
             <div className="flex justify-center -my-2 relative z-10">
               <div className="bg-slate-700 p-2 rounded-full border-4 border-slate-900">
-                <Layers className="w-4 h-4 text-white" />
+                <Layers className={`w-4 h-4 text-white ${interactionState === 'loading' ? 'animate-spin' : ''}`} />
               </div>
             </div>
             <div className="bg-slate-800 p-4 rounded-lg">
               <div className="flex justify-between text-sm mb-2">
                 <span className="text-slate-400">You receive</span>
-                <span className="text-slate-400">Balance: 0.00 OPK</span>
+                <span className="text-slate-400">Balance: {data.tokenBalance.toFixed(2)} OPK</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-2xl font-bold text-white">142.5</span>
@@ -51,8 +72,13 @@ export default function SynthesisPreview() {
                 </span>
               </div>
             </div>
-            <button className="w-full py-4 mt-4 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-xl font-bold text-white shadow-lg shadow-blue-500/20 hover:scale-[1.02] transition-transform">
-              Connect Wallet
+            <button
+              onClick={() => handleSimulate('swap')}
+              disabled={interactionState !== 'idle'}
+              className={`w-full py-4 mt-4 rounded-xl font-bold text-white shadow-lg transition-all ${interactionState === 'success' ? 'bg-green-500 shadow-green-500/20' : 'bg-gradient-to-r from-blue-600 to-cyan-500 shadow-blue-500/20 hover:scale-[1.02]'
+                }`}
+            >
+              {interactionState === 'loading' ? 'Swapping...' : interactionState === 'success' ? 'Swap Successful!' : 'Swap Now'}
             </button>
           </div>
         </div>
@@ -64,10 +90,10 @@ export default function SynthesisPreview() {
       component: (
         <div className="p-6 rounded-xl bg-slate-900 border border-slate-700 shadow-2xl max-w-sm mx-auto text-center">
           <div className="aspect-square rounded-xl bg-gradient-to-br from-purple-900 to-pink-900 mb-6 flex items-center justify-center relative overflow-hidden group">
-            <Sparkles className="w-16 h-16 text-white/20 group-hover:scale-110 transition-transform duration-500" />
+            <Sparkles className={`w-16 h-16 text-white/20 transition-all duration-500 ${interactionState === 'loading' ? 'scale-150 animate-pulse' : 'group-hover:scale-110'}`} />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
               <div className="text-left">
-                <h4 className="font-bold text-white">Cyber Genesis #402</h4>
+                <h4 className="font-bold text-white">Cyber Genesis #{data.minted + 1}</h4>
                 <p className="text-xs text-purple-300">0.5 SOL</p>
               </div>
             </div>
@@ -75,7 +101,7 @@ export default function SynthesisPreview() {
           <div className="flex justify-between items-center mb-6 px-2">
             <div className="text-left">
               <p className="text-xs text-slate-400">Total Minted</p>
-              <p className="font-bold text-white">4,021 / 5,555</p>
+              <p className="font-bold text-white">{data.minted.toLocaleString()} / 5,555</p>
             </div>
             <div className="text-right">
               <p className="text-xs text-slate-400">Price</p>
@@ -83,10 +109,18 @@ export default function SynthesisPreview() {
             </div>
           </div>
           <div className="w-full bg-slate-800 rounded-full h-2 mb-6">
-            <div className="bg-gradient-to-r from-purple-500 to-pink-500 w-[72%] h-full rounded-full"></div>
+            <div
+              className="bg-gradient-to-r from-purple-500 to-pink-500 h-full rounded-full transition-all duration-1000"
+              style={{ width: `${(data.minted / 5555) * 100}%` }}
+            ></div>
           </div>
-          <button className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl font-bold text-white shadow-lg shadow-purple-500/20 hover:scale-[1.02] transition-transform">
-            Mint Now
+          <button
+            onClick={() => handleSimulate('mint')}
+            disabled={interactionState !== 'idle'}
+            className={`w-full py-3 rounded-xl font-bold text-white shadow-lg transition-all ${interactionState === 'success' ? 'bg-green-500 shadow-green-500/20' : 'bg-gradient-to-r from-purple-600 to-pink-600 shadow-purple-500/20 hover:scale-[1.02]'
+              }`}
+          >
+            {interactionState === 'loading' ? 'Minting...' : interactionState === 'success' ? 'Minted Successfully!' : 'Mint Now (Fake)'}
           </button>
         </div>
       )
@@ -113,7 +147,7 @@ export default function SynthesisPreview() {
             </div>
             <div className="bg-slate-800 p-3 rounded-lg text-center">
               <p className="text-xs text-slate-400 mb-1">Your Rewards</p>
-              <p className="font-bold text-emerald-400">244.2 OPK</p>
+              <p className="font-bold text-emerald-400">{data.staked.toFixed(1)} OPK</p>
             </div>
           </div>
 
@@ -128,8 +162,13 @@ export default function SynthesisPreview() {
             </div>
           </div>
 
-          <button className="w-full py-3 mt-6 bg-gradient-to-r from-emerald-600 to-teal-500 rounded-xl font-bold text-white shadow-lg shadow-emerald-500/20 hover:scale-[1.02] transition-transform">
-            Stake Tokens
+          <button
+            onClick={() => handleSimulate('stake')}
+            disabled={interactionState !== 'idle'}
+            className={`w-full py-3 mt-6 rounded-xl font-bold text-white shadow-lg transition-all ${interactionState === 'success' ? 'bg-green-500 shadow-green-500/20' : 'bg-gradient-to-r from-emerald-600 to-teal-500 shadow-emerald-500/20 hover:scale-[1.02]'
+              }`}
+          >
+            {interactionState === 'loading' ? 'Staking...' : interactionState === 'success' ? 'Staked Successfully!' : 'Stake 100 OPK'}
           </button>
         </div>
       )
@@ -203,8 +242,8 @@ export function ${activeTheme === 'defi' ? 'SwapInterface' : activeTheme === 'nf
                       key={key}
                       onClick={() => setActiveTheme(key)}
                       className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${activeTheme === key
-                          ? 'bg-slate-700 text-white ring-1 ring-white/20'
-                          : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                        ? 'bg-slate-700 text-white ring-1 ring-white/20'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800'
                         }`}
                     >
                       {themes[key].name}
