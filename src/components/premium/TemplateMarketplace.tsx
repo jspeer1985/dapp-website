@@ -7,20 +7,18 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  Code, 
-  Zap, 
-  Shield, 
-  TrendingUp, 
-  Users, 
-  Globe, 
-  Lock, 
-  Rocket,
-  Star,
-  Download,
-  Eye,
-  ShoppingCart,
-  Check
+  Star, 
+  Download, 
+  Eye, 
+  ShoppingCart, 
+  Check, 
+  ExternalLink,
+  Code,
+  Zap,
+  Shield,
+  TrendingUp
 } from 'lucide-react';
+import Link from 'next/link';
 
 interface Template {
   id: string;
@@ -608,14 +606,13 @@ export default function TemplateMarketplace() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => {
-                          setSelectedTemplate(template);
-                          setShowPreview(true);
-                        }}
+                        asChild
                         className="flex-1"
                       >
-                        <Eye className="h-4 w-4 mr-2" />
-                        Preview
+                        <Link href={`/templates/preview/${template.id}`}>
+                          <Eye className="h-4 w-4 mr-2" />
+                          Preview
+                        </Link>
                       </Button>
                       <Button
                         size="sm"
