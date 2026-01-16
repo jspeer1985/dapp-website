@@ -60,17 +60,25 @@ export async function POST(request: NextRequest) {
       },
     ];
 
-    // Add Liquidity Pool fee if enabled
+    // Add Liquidity Pool fee if enabled (15% of base price)
     if (generation.liquidityPoolConfig?.enabled) {
-      const lpPriceId = process.env.NEXT_PUBLIC_STRIPE_LP_FEE_PRICE_ID;
-      if (lpPriceId) {
-        line_items.push({
-          price: lpPriceId,
-          quantity: 1,
-        });
-      } else {
-        logger.warn({ jobId }, 'Liquidity Pool enabled but NEXT_PUBLIC_STRIPE_LP_FEE_PRICE_ID missing');
-      }
+      // Calculate LP fee as 15% of the base product price
+      const basePrice = generation.payment.amount; // This is the USD amount from the generation
+      const lpFeeAmount = Math.round(basePrice * 0.15 * 100); // Convert to cents
+
+      line_items.push({
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: 'Liquidity Pool Integration Fee',
+            description: '15% integration fee for automated LP setup',
+          },
+          unit_amount: lpFeeAmount,
+        },
+        quantity: 1,
+      });
+
+      logger.info({ jobId, lpFeeAmount: lpFeeAmount / 100 }, 'Added dynamic LP fee to checkout');
     }
 
     logger.info({ jobId, customerEmail, priceId, hasLP: !!generation.liquidityPoolConfig?.enabled }, 'Creating Stripe checkout session');

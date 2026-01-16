@@ -97,10 +97,12 @@ export default function DAppCreationForm() {
   };
 
   const calculateLPFee = () => {
-    if (!formData.liquidityPool.enabled || !formData.liquidityPool.desiredLPSize) {
+    if (!formData.liquidityPool.enabled) {
       return 0;
     }
-    return formData.liquidityPool.desiredLPSize * 0.15;
+    // LP integration fee is 15% of the base product price
+    const basePrice = calculatePrice();
+    return basePrice * 0.15;
   };
 
   const totalPrice = calculatePrice() + calculateLPFee();
