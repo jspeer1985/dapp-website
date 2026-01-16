@@ -117,7 +117,7 @@ export default function PricingTiers() {
                     ))}
                   </ul>
 
-                  <Link href="/generate" className="block">
+                  <Link href="/factory" className="block">
                     <Button
                       size="lg"
                       variant={tier.popular ? 'gradient' : 'outline'}

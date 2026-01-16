@@ -1,3 +1,5 @@
+'use client';
+
 import TemplateMarketplace from '@/components/templates/TemplateMarketplace';
 import Navbar from '@/components/Navbar';
 import Footer from '../../components/Footer';

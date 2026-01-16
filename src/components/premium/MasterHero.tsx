@@ -59,7 +59,7 @@ export default function MasterHero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <Link href="/generate">
+            <Link href="/factory">
               <Button size="lg" variant="gradient" className="gap-2">
                 <Rocket className="h-5 w-5" />
                 Generate Now

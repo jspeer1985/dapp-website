@@ -1,8 +1,9 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Star, Shield, Zap, ExternalLink, Copy } from 'lucide-react';
+import { Star, Shield, Zap, ExternalLink, Copy, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { useState } from 'react';
 
 interface Template {
     id: string;
@@ -15,6 +16,18 @@ interface Template {
     audited: boolean;
     features: string[];
     image: string;
+    // Template-specific configuration
+    templateConfig?: {
+        projectType: 'dapp' | 'token' | 'both';
+        tier: 'starter' | 'professional' | 'enterprise';
+        features: string[];
+        tokenConfig?: {
+            name: string;
+            symbol: string;
+            decimals: number;
+            totalSupply: string;
+        };
+    };
 }
 
 const templates: Template[] = [
@@ -28,7 +41,18 @@ const templates: Template[] = [
         reviews: 124,
         audited: true,
         features: ['Concentrated Liquidity', 'Yield Farming', 'Analytics Dashboard', 'Smart Router'],
-        image: '🌊'
+        image: '🌊',
+        templateConfig: {
+            projectType: 'both',
+            tier: 'professional',
+            features: ['DeFi Swap', 'Liquidity Pools', 'Yield Farming', 'Analytics Dashboard'],
+            tokenConfig: {
+                name: 'Liquidity Token',
+                symbol: 'LIQ',
+                decimals: 9,
+                totalSupply: '1000000000'
+            }
+        }
     },
     {
         id: 'nft-marketplace-pro',
@@ -40,7 +64,18 @@ const templates: Template[] = [
         reviews: 89,
         audited: true,
         features: ['Auctions & Fixed Price', 'Creator Royalties', 'Collection Launchpad', 'Activity Feed'],
-        image: '🖼️'
+        image: '🖼️',
+        templateConfig: {
+            projectType: 'both',
+            tier: 'professional',
+            features: ['NFT Marketplace', 'Auctions', 'Royalties', 'Launchpad'],
+            tokenConfig: {
+                name: 'NFT Platform Token',
+                symbol: 'NFT',
+                decimals: 9,
+                totalSupply: '500000000'
+            }
+        }
     },
     {
         id: 'dao-governance',
@@ -52,7 +87,18 @@ const templates: Template[] = [
         reviews: 56,
         audited: true,
         features: ['Quadratic Voting', 'Treasury Multisig', 'Proposal Dashboard', 'Token Gating'],
-        image: '⚖️'
+        image: '⚖️',
+        templateConfig: {
+            projectType: 'both',
+            tier: 'professional',
+            features: ['DAO Governance', 'Quadratic Voting', 'Treasury Management', 'Proposal System'],
+            tokenConfig: {
+                name: 'Governance Token',
+                symbol: 'GOV',
+                decimals: 9,
+                totalSupply: '100000000'
+            }
+        }
     },
     {
         id: 'p2e-staking',
@@ -64,11 +110,93 @@ const templates: Template[] = [
         reviews: 42,
         audited: false,
         features: ['Level-up System', 'Rewards Multiplier', 'Leaderboard', 'NFT Staking'],
-        image: '🎮'
+        image: '🎮',
+        templateConfig: {
+            projectType: 'both',
+            tier: 'professional',
+            features: ['GameFi Staking', 'Level System', 'Rewards Multiplier', 'Leaderboard'],
+            tokenConfig: {
+                name: 'Game Token',
+                symbol: 'GAME',
+                decimals: 9,
+                totalSupply: '2000000000'
+            }
+        }
     }
 ];
 
 export default function TemplateMarketplace() {
+    const [loadingTemplate, setLoadingTemplate] = useState<string | null>(null);
+
+    const handlePreviewTemplate = (templateId: string) => {
+        // Open preview in new tab or modal
+        window.open(`/templates/preview/${templateId}`, '_blank');
+    };
+
+    const handleCloneTemplate = async (template: Template) => {
+        if (!template.templateConfig) {
+            alert('Template configuration not available');
+            return;
+        }
+
+        setLoadingTemplate(template.id);
+
+        try {
+            // Create a generation from the template
+            const response = await fetch('/api/generations/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    // Required fields
+                    walletAddress: 'template-user', // Will be updated with actual wallet
+                    customerName: 'Template User',
+                    customerEmail: 'user@template.com',
+                    projectName: `${template.title} - Clone`,
+                    projectDescription: `Cloned from template: ${template.description}`,
+                    projectType: template.templateConfig.projectType,
+                    tier: template.templateConfig.tier,
+                    
+                    // Template-specific configuration
+                    features: template.templateConfig.features,
+                    tokenConfig: template.templateConfig.tokenConfig ? {
+                        name: template.templateConfig.tokenConfig.name,
+                        symbol: template.templateConfig.tokenConfig.symbol,
+                        decimals: template.templateConfig.tokenConfig.decimals,
+                        totalSupply: parseInt(template.templateConfig.tokenConfig.totalSupply),
+                        logoUrl: '',
+                        isNFT: template.category === 'NFT',
+                        nftCollectionName: template.category === 'NFT' ? template.title : undefined,
+                        royaltyPercentage: 5,
+                    } : undefined,
+
+                    // Metadata
+                    metadata: {
+                        primaryColor: '#6366f1',
+                        targetAudience: template.category,
+                        customRequirements: `Cloned from ${template.title} template`,
+                    },
+                }),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to create generation');
+            }
+
+            const result = await response.json();
+            
+            // Redirect to factory with the generation ID
+            window.location.href = `/factory?generationId=${result.generationId}`;
+            
+        } catch (error) {
+            console.error('Error cloning template:', error);
+            alert('Failed to clone template. Please try again.');
+        } finally {
+            setLoadingTemplate(null);
+        }
+    };
     return (
         <div className="container py-12">
             <div className="text-center max-w-2xl mx-auto mb-16">
@@ -125,13 +253,25 @@ export default function TemplateMarketplace() {
                         <CardFooter className="flex justify-between items-center border-t border-slate-800 pt-6">
                             <span className="text-2xl font-bold text-white">{template.price}</span>
                             <div className="flex gap-2">
-                                <Button variant="outline" className="border-slate-700 text-slate-300 hover:bg-slate-800">
+                                <Button 
+                                    variant="outline" 
+                                    className="border-slate-700 text-slate-300 hover:bg-slate-800"
+                                    onClick={() => handlePreviewTemplate(template.id)}
+                                >
                                     <ExternalLink className="w-4 h-4 mr-2" />
                                     Preview
                                 </Button>
-                                <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:opacity-90">
-                                    <Copy className="w-4 h-4 mr-2" />
-                                    Clone
+                                <Button 
+                                    className="bg-gradient-to-r from-purple-600 to-blue-600 hover:opacity-90"
+                                    onClick={() => handleCloneTemplate(template)}
+                                    disabled={loadingTemplate === template.id}
+                                >
+                                    {loadingTemplate === template.id ? (
+                                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    ) : (
+                                        <Copy className="w-4 h-4 mr-2" />
+                                    )}
+                                    {loadingTemplate === template.id ? 'Cloning...' : 'Clone'}
                                 </Button>
                             </div>
                         </CardFooter>
