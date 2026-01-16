@@ -96,14 +96,14 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-white">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 p-8">
+    <div className="min-h-screen p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -152,11 +152,10 @@ export default function AdminDashboard() {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-6 py-2 rounded-lg font-bold transition-all ${
-                filter === f
+              className={`px-6 py-2 rounded-lg font-bold transition-all ${filter === f
                   ? 'bg-blue-500 text-white'
                   : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-              }`}
+                }`}
             >
               {f.charAt(0).toUpperCase() + f.slice(1)}
             </button>
@@ -215,26 +214,24 @@ export default function AdminDashboard() {
                       </span>
                     </td>
                     <td className="p-4">
-                      <span className={`text-sm font-bold ${
-                        job.riskScore > 50 ? 'text-red-400' :
-                        job.riskScore > 30 ? 'text-yellow-400' :
-                        'text-green-400'
-                      }`}>
+                      <span className={`text-sm font-bold ${job.riskScore > 50 ? 'text-red-400' :
+                          job.riskScore > 30 ? 'text-yellow-400' :
+                            'text-green-400'
+                        }`}>
                         {job.riskScore}/100
                       </span>
                     </td>
                     <td className="p-4">
                       {job.downloadToken ? (
                         <div className="flex flex-col gap-1">
-                          <span className={`text-xs px-2 py-1 rounded ${
-                            job.canDownload 
-                              ? 'bg-green-900 text-green-300' 
+                          <span className={`text-xs px-2 py-1 rounded ${job.canDownload
+                              ? 'bg-green-900 text-green-300'
                               : 'bg-red-900 text-red-300'
-                          }`}>
+                            }`}>
                             {job.downloadCount || 0}/{job.maxDownloads || 10}
                           </span>
                           {job.canDownload && (
-                            <a 
+                            <a
                               href={`/api/downloads/${job.downloadToken}`}
                               target="_blank"
                               className="text-xs text-blue-400 hover:text-blue-300 underline"
