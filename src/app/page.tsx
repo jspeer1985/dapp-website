@@ -2,6 +2,7 @@ import MasterHero from '@/components/premium/MasterHero';
 import SecurityPulse from '@/components/premium/SecurityPulse';
 import HowItWorks from '@/components/premium/HowItWorks';
 import DynamicPricingTiers from '@/components/premium/DynamicPricingTiers';
+import TemplateMarketplace from '@/components/premium/TemplateMarketplace';
 import SynthesisPreview from '@/components/premium/SynthesisPreview';
 import AgentTerminal from '@/components/premium/AgentTerminal';
 import MarketDynamics from '@/components/premium/MarketDynamics';
@@ -15,6 +16,7 @@ export default function Home() {
       <SecurityPulse />
       <HowItWorks />
       <DynamicPricingTiers />
+      <TemplateMarketplace />
       <SynthesisPreview />
       <AgentTerminal />
       <MarketDynamics />

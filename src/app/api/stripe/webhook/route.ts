@@ -56,16 +56,26 @@ export async function POST(req: NextRequest) {
 async function handleCheckoutSession(session: Stripe.Checkout.Session) {
   const jobId = session.metadata?.jobId;
   const productType = session.metadata?.productType;
+  const templateId = session.metadata?.templateId;
+  const templateName = session.metadata?.templateName;
+  const price = session.metadata?.price;
 
-  logger.info({ jobId, sessionId: session.id }, 'Processing successful Stripe checkout');
-
-  if (!jobId) {
-    logger.error('No jobId found in session metadata');
-    return;
-  }
+  logger.info({ jobId, templateId, sessionId: session.id }, 'Processing successful Stripe checkout');
 
   try {
     await connectToDatabase();
+
+    // Handle template purchase
+    if (templateId && templateName) {
+      await handleTemplatePurchase(session, templateId, templateName, price);
+      return;
+    }
+
+    // Handle generation payment
+    if (!jobId) {
+      logger.error('No jobId found in session metadata');
+      return;
+    }
 
     const generation = await Generation.findOne({ generationId: jobId });
 
@@ -93,8 +103,46 @@ async function handleCheckoutSession(session: Stripe.Checkout.Session) {
     }).catch(err => logger.error({ jobId, err }, 'Failed to trigger background generation'));
 
   } catch (error) {
-    logger.error({ jobId, error }, 'Error fulfilling Stripe order');
+    logger.error({ jobId, templateId, error }, 'Error fulfilling Stripe order');
   }
+}
+
+async function handleTemplatePurchase(session: Stripe.Checkout.Session, templateId: string, templateName: string, price: string) {
+  const customerEmail = session.customer_details?.email;
+  
+  logger.info({ templateId, templateName, customerEmail }, 'Processing template purchase');
+
+  try {
+    // Create template purchase record
+    const TemplatePurchase = require('@/models/TemplatePurchase').default;
+    
+    const purchase = new TemplatePurchase({
+      sessionId: session.id,
+      templateId,
+      templateName,
+      price: parseFloat(price),
+      currency: 'USD',
+      customerEmail,
+      status: 'completed',
+      purchaseDate: new Date(),
+      stripeCustomerId: session.customer,
+    });
+
+    await purchase.save();
+
+    // Send purchase confirmation email
+    await sendTemplatePurchaseEmail(customerEmail, templateName, templateId);
+
+    logger.info({ templateId, customerEmail }, 'Template purchase completed successfully');
+
+  } catch (error) {
+    logger.error({ templateId, error }, 'Error processing template purchase');
+  }
+}
+
+async function sendTemplatePurchaseEmail(email: string, templateName: string, templateId: string) {
+  // Implement email sending logic
+  logger.info({ email, templateName, templateId }, 'Sending template purchase confirmation email');
 }
 
 async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
