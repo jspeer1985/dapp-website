@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
 
 export default function SynthesisPreview() {
+  const [activeTheme, setActiveTheme] = React.useState<'defi' | 'nft' | 'staking'>('defi');
   const [interactionState, setInteractionState] = React.useState<'idle' | 'loading' | 'success'>('idle');
   const [data, setData] = React.useState({
     solBalance: 24.5,
