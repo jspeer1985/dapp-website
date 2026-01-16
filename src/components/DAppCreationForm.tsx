@@ -130,7 +130,13 @@ export default function DAppCreationForm() {
         } : undefined,
         metadata: {
           primaryColor: formData.dappInfo.primaryColor,
-        }
+        },
+        liquidityPoolConfig: formData.liquidityPool.enabled ? {
+          enabled: true,
+          desiredLPSize: formData.liquidityPool.desiredLPSize,
+          pairToken: formData.liquidityPool.pairToken,
+          dexPlatform: formData.liquidityPool.dexPlatform,
+        } : { enabled: false }
       };
 
       const createResponse = await fetch('/api/generations/create', {

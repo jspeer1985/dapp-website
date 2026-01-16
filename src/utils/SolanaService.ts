@@ -32,7 +32,10 @@ export class SolanaService {
     );
 
     if (!treasuryPublicKey) {
-      throw new Error('SOLANA_TREASURY_WALLET not configured');
+      console.warn('SOLANA_TREASURY_WALLET not configured - Solana features will be disabled');
+      // Use a dummy key to prevent errors during build
+      this.treasuryWallet = new PublicKey('11111111111111111111111111111111');
+      return;
     }
 
     this.treasuryWallet = new PublicKey(treasuryPublicKey);

@@ -8,8 +8,8 @@ import NetworkBackground from '@/components/NetworkBackground'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'dApp Factory - AI-Powered Solana dApp Generation',
-  description: 'Generate production-ready Solana dApps with AI in minutes. No coding required.',
+  title: 'Optik | AI-Powered Web3 Application Factory',
+  description: 'Optik generates production-ready Solana dApps and tokens in minutes. The ultimate automated dApp factory for the Solana ecosystem.',
 }
 
 export default function RootLayout({

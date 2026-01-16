@@ -33,6 +33,12 @@ const generationSchema = z.object({
     telegramUrl: z.string().url().optional(),
     customRequirements: z.string().optional(),
   }).optional(),
+  liquidityPoolConfig: z.object({
+    enabled: z.boolean(),
+    desiredLPSize: z.number().optional(),
+    pairToken: z.string().optional(),
+    dexPlatform: z.string().optional(),
+  }).optional(),
 });
 
 // --- Helper to safely convert to BigInt ---
@@ -57,9 +63,18 @@ export async function POST(req: NextRequest) {
 
     // Generate unique ID
     const generationId = `gen_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
-    // Calculate payment amount based on tier
-    const paymentAmount = parsed.tier === 'starter' ? 0.1 : parsed.tier === 'professional' ? 0.5 : 2.0;
+
+    // Import pricing logic to get correct USD amounts
+    const { getTokenPrice, getDAppPrice, getBundlePrice } = require('@/lib/pricing');
+
+    let paymentAmount = 0;
+    if (parsed.projectType === 'both') {
+      paymentAmount = getBundlePrice(parsed.tier, parsed.tier).usd;
+    } else if (parsed.projectType === 'token') {
+      paymentAmount = getTokenPrice(parsed.tier).usd;
+    } else {
+      paymentAmount = getDAppPrice(parsed.tier).usd;
+    }
 
     // Create new generation document
     const newGeneration = new Generation({
@@ -75,8 +90,8 @@ export async function POST(req: NextRequest) {
         telegramHandle: parsed.telegramHandle,
       },
       aiConfig: {
-        provider: 'openai',
-        model: 'gpt-4',
+        provider: process.env.AI_PROVIDER || 'openai',
+        model: process.env.AI_MODEL || 'gpt-4o',
         prompt: parsed.projectDescription,
         temperature: 0.7,
       },
@@ -90,9 +105,15 @@ export async function POST(req: NextRequest) {
           mintAuthority: parsed.walletAddress,
         },
       }),
+      liquidityPoolConfig: parsed.liquidityPoolConfig ? {
+        enabled: parsed.liquidityPoolConfig.enabled,
+        tokenAmount: 0, // Will be set during generation if enabled
+        solAmount: parsed.liquidityPoolConfig.desiredLPSize || 0,
+        status: 'pending'
+      } : undefined,
       payment: {
         amount: paymentAmount,
-        currency: 'SOL',
+        currency: 'USD',
         transactionSignature: '', // Will be set after payment
         status: 'pending',
         timestamp: new Date(),
@@ -109,8 +130,8 @@ export async function POST(req: NextRequest) {
     // Save to database
     await newGeneration.save();
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       generationId,
       paymentAmount,
     });
