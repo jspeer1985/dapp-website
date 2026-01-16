@@ -63,7 +63,11 @@ export default function ProjectForm({ onComplete }: ProjectFormProps) {
 
     setLoading(true);
     try {
-      const response = await fetch('/api/generations/create', {
+      // Use explicit origin to avoid port mismatch issues
+      const apiUrl = `${window.location.origin}/api/generations/create`;
+      console.log('Making request to:', apiUrl);
+      
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -98,15 +102,21 @@ export default function ProjectForm({ onComplete }: ProjectFormProps) {
         }),
       });
 
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
+      
       const data = await response.json();
+      console.log('Response data:', data);
+      
       if (data.success) {
         onComplete(data.generationId, data.paymentAmount);
       } else {
-        alert('Error creating generation: ' + data.error);
+        console.error('API Error:', data);
+        alert('Error creating generation: ' + (data.error || 'Unknown error'));
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('Failed to create generation');
+      console.error('Network Error:', error);
+      alert('Failed to create generation: ' + (error instanceof Error ? error.message : 'Unknown error'));
     } finally {
       setLoading(false);
     }

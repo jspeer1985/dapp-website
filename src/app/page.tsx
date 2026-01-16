@@ -1,7 +1,7 @@
 import MasterHero from '@/components/premium/MasterHero';
 import SecurityPulse from '@/components/premium/SecurityPulse';
 import HowItWorks from '@/components/premium/HowItWorks';
-import PricingTiers from '@/components/premium/PricingTiers';
+import DynamicPricingTiers from '@/components/premium/DynamicPricingTiers';
 import SynthesisPreview from '@/components/premium/SynthesisPreview';
 import AgentTerminal from '@/components/premium/AgentTerminal';
 import MarketDynamics from '@/components/premium/MarketDynamics';
@@ -14,7 +14,7 @@ export default function Home() {
       <MasterHero />
       <SecurityPulse />
       <HowItWorks />
-      <PricingTiers />
+      <DynamicPricingTiers />
       <SynthesisPreview />
       <AgentTerminal />
       <MarketDynamics />
@@ -24,7 +24,7 @@ export default function Home() {
       <footer className="border-t py-12 bg-muted/50">
         <div className="container">
           <div className="text-center text-sm text-muted-foreground">
-            <p className="mb-2">© 2024 dApp Factory. All rights reserved.</p>
+            <p className="mb-2"> 2024 dApp Factory. All rights reserved.</p>
             <p className="mb-4">Built with AI on Solana</p>
             <p className="max-w-2xl mx-auto text-xs opacity-70">
               Disclaimer: Optik provides software development scaffolds and templates.

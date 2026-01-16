@@ -13,52 +13,52 @@ export interface TierInfo {
   securityLevel: string;
 }
 
-// Token-only pricing
+// Token-only pricing - TESTING PRICES ($0.01 - $0.10)
 export function getTokenPrice(tier: Tier): { sol: number; usd: number } {
   const prices = {
     starter: {
-      sol: Number(process.env.NEXT_PUBLIC_TOKEN_STARTER_PRICE_SOL) || 1.5,
-      usd: Number(process.env.NEXT_PUBLIC_TOKEN_STARTER_PRICE_USD) || 249,
+      sol: 0.001, // ~$0.01
+      usd: 0.01,
     },
     professional: {
-      sol: Number(process.env.NEXT_PUBLIC_TOKEN_PROFESSIONAL_PRICE_SOL) || 4.5,
-      usd: Number(process.env.NEXT_PUBLIC_TOKEN_PROFESSIONAL_PRICE_USD) || 699,
+      sol: 0.005, // ~$0.05
+      usd: 0.05,
     },
     enterprise: {
-      sol: Number(process.env.NEXT_PUBLIC_TOKEN_ENTERPRISE_PRICE_SOL) || 12.5,
-      usd: Number(process.env.NEXT_PUBLIC_TOKEN_ENTERPRISE_PRICE_USD) || 1899,
+      sol: 0.01, // ~$0.10
+      usd: 0.10,
     },
   };
 
   return prices[tier];
 }
 
-// dApp-only pricing
+// dApp-only pricing - TESTING PRICES ($0.01 - $0.10)
 export function getDAppPrice(tier: Tier): { sol: number; usd: number } {
   const prices = {
     starter: {
-      sol: Number(process.env.NEXT_PUBLIC_DAPP_STARTER_PRICE_SOL) || 4.5,
-      usd: Number(process.env.NEXT_PUBLIC_DAPP_STARTER_PRICE_USD) || 699,
+      sol: 0.001, // ~$0.01
+      usd: 0.01,
     },
     professional: {
-      sol: Number(process.env.NEXT_PUBLIC_DAPP_PROFESSIONAL_PRICE_SOL) || 12.5,
-      usd: Number(process.env.NEXT_PUBLIC_DAPP_PROFESSIONAL_PRICE_USD) || 1899,
+      sol: 0.005, // ~$0.05
+      usd: 0.05,
     },
     enterprise: {
-      sol: Number(process.env.NEXT_PUBLIC_DAPP_ENTERPRISE_PRICE_SOL) || 35.0,
-      usd: Number(process.env.NEXT_PUBLIC_DAPP_ENTERPRISE_PRICE_USD) || 4999,
+      sol: 0.01, // ~$0.10
+      usd: 0.10,
     },
   };
 
   return prices[tier];
 }
 
-// Bundle pricing (token + dApp)
+// Bundle pricing (token + dApp) - TESTING PRICES ($0.01 - $0.10)
 export function getBundlePrice(tokenTier: Tier, dappTier: Tier): { sol: number; usd: number } {
   const prices = {
-    starter: Number(process.env.NEXT_PUBLIC_BUNDLE_STARTER_PRICE_USD) || 849,
-    professional: Number(process.env.NEXT_PUBLIC_BUNDLE_PROFESSIONAL_PRICE_USD) || 2399,
-    enterprise: Number(process.env.NEXT_PUBLIC_BUNDLE_ENTERPRISE_PRICE_USD) || 6299,
+    starter: 0.01,
+    professional: 0.05,
+    enterprise: 0.10,
   };
 
   const tier = dappTier === 'enterprise' || tokenTier === 'enterprise' ? 'enterprise' :

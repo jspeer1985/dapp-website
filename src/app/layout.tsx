@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { WalletContextProvider } from '@/components/WalletContextProvider'
+import WalletErrorBoundary from '@/components/ui/wallet-error-boundary'
 import Navbar from '@/components/Navbar'
 import NetworkBackground from '@/components/NetworkBackground'
 import OptikChatbot from '@/components/OptikChatbot'
@@ -22,13 +23,15 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={inter.className}>
         <NetworkBackground />
-        <WalletContextProvider>
-          <div className="relative z-10 flex flex-col min-h-screen">
-            <Navbar />
-            <main className="flex-grow">{children}</main>
-            <OptikChatbot />
-          </div>
-        </WalletContextProvider>
+        <WalletErrorBoundary>
+          <WalletContextProvider>
+            <div className="relative z-10 flex flex-col min-h-screen">
+              <Navbar />
+              <main className="flex-grow">{children}</main>
+              <OptikChatbot />
+            </div>
+          </WalletContextProvider>
+        </WalletErrorBoundary>
       </body>
     </html>
   )
