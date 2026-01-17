@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
-import Stripe from 'stripe';
+import { stripe, validateStripeEnvironment } from '@/lib/stripe';
 import { connectToDatabase } from '@/lib/mongodb';
 import Generation from '@/models/Generation';
 import { createLogger } from '@/utils/logger';
+import type Stripe from 'stripe';
 
 const logger = createLogger('StripeWebhook');
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-12-15.clover',
-});
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -87,7 +84,7 @@ async function handleCheckoutSession(session: Stripe.Checkout.Session) {
     // Update status to paid
     generation.payment.status = 'confirmed';
     generation.payment.currency = 'USD';
-    generation.payment.amount = (session.amount_total || 0) / 100;
+    generation.payment.amount = (session.amount_total ?? 0) / 100;
     generation.status = 'payment_confirmed';
     generation.timestamps.paymentConfirmed = new Date();
 
@@ -131,7 +128,9 @@ async function handleTemplatePurchase(session: Stripe.Checkout.Session, template
     await purchase.save();
 
     // Send purchase confirmation email
-    await sendTemplatePurchaseEmail(customerEmail, templateName, templateId);
+    if (customerEmail) {
+      await sendTemplatePurchaseEmail(customerEmail, templateName, templateId);
+    }
 
     logger.info({ templateId, customerEmail }, 'Template purchase completed successfully');
 

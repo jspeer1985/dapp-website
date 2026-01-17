@@ -1,20 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Stripe from 'stripe';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia',
-});
+import { stripe, validateStripeEnvironment, createCheckoutSession } from '@/lib/stripe';
 
 export async function POST(req: NextRequest) {
   try {
-    // Check if Stripe is configured
-    if (!process.env.STRIPE_SECRET_KEY) {
-      console.error('Stripe secret key is not configured');
-      return NextResponse.json(
-        { error: 'Payment system is not properly configured. Please contact support.' },
-        { status: 500 }
-      );
-    }
+    // Validate Stripe environment
+    validateStripeEnvironment();
 
     const { templateId, templateName, price } = await req.json();
 
@@ -38,36 +28,10 @@ export async function POST(req: NextRequest) {
     }
 
     // Create Stripe Checkout Session
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: templateName,
-              description: `Professional dApp template: ${templateName}`,
-              images: [`https://dapp-factory.com/templates/${templateId}-preview.png`],
-            },
-            unit_amount: price * 100, // Convert to cents
-          },
-          quantity: 1,
-        },
-      ],
-      mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/templates/success?session_id={CHECKOUT_SESSION_ID}&templateId=${templateId}&templateName=${encodeURIComponent(templateName)}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/templates`,
-      metadata: {
-        templateId,
-        templateName,
-        price: price.toString(),
-      },
-      customer_email: undefined, // Will be collected in checkout
-      billing_address_collection: 'auto',
-      allow_promotion_codes: true,
-      automatic_tax: {
-        enabled: true,
-      },
+    const session = await createCheckoutSession({
+      templateId,
+      templateName,
+      price,
     });
 
     console.log('Stripe session created successfully:', session.id);
