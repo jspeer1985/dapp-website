@@ -63,7 +63,7 @@ async function handleCheckoutSession(session: Stripe.Checkout.Session) {
     await connectToDatabase();
 
     // Handle template purchase
-    if (templateId && templateName) {
+    if (templateId && templateName && price) {
       await handleTemplatePurchase(session, templateId, templateName, price);
       return;
     }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useWallet } from '@/hooks/useWallet';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,9 +10,10 @@ import { Loader2, Upload } from 'lucide-react';
 
 interface ProjectFormProps {
   onComplete: (generationId: string, paymentAmount: number) => void;
+  selectedTier?: string | null;
 }
 
-export default function ProjectForm({ onComplete }: ProjectFormProps) {
+export default function ProjectForm({ onComplete, selectedTier }: ProjectFormProps) {
   const { address } = useWallet();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -56,6 +57,33 @@ export default function ProjectForm({ onComplete }: ProjectFormProps) {
   });
 
   const [featureInput, setFeatureInput] = useState('');
+
+  // Set tier from URL parameter
+  useEffect(() => {
+    if (selectedTier) {
+      // Map URL-friendly tier names to actual tier values
+      const tierMapping: Record<string, 'starter' | 'professional' | 'enterprise'> = {
+        // Original PricingTiers mappings
+        'development-starter': 'starter',
+        'professional-stack': 'professional',
+        'enterprise-foundation': 'enterprise',
+        // DynamicPricingTiers mappings
+        'starter': 'starter',
+        'builder': 'professional', // Map builder to professional
+        'launchpad': 'professional', // Map launchpad to professional
+        'agency': 'enterprise', // Map agency to enterprise
+        'enterprise': 'enterprise'
+      };
+      
+      const mappedTier = tierMapping[selectedTier];
+      if (mappedTier) {
+        setFormData(prev => ({
+          ...prev,
+          tier: mappedTier
+        }));
+      }
+    }
+  }, [selectedTier]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

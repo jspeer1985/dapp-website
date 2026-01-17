@@ -65,7 +65,7 @@ export async function POST(
       const result = await AIService.generateDApp({
         projectName: generation.projectName,
         projectDescription: generation.projectDescription,
-        projectType: generation.projectType,
+        projectType: generation.projectType as any,
         features: [],
         tokenConfig: generation.tokenConfig,
       });
@@ -90,7 +90,7 @@ export async function POST(
       }
 
       generation.generatedCode = {
-        files: result.files,
+        files: result.files as any,
         packageJson: result.packageJson,
         readme: result.readme,
         totalFiles: result.totalFiles,

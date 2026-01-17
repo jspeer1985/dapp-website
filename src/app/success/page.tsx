@@ -1,20 +1,35 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Download, ExternalLink, CheckCircle2, Package, Shield } from 'lucide-react';
+import AuthGuard from '@/components/AuthGuard';
 
-export default function SuccessPage() {
+function SuccessPageContent() {
   const searchParams = useSearchParams();
   const generationId = searchParams.get('id');
+  const sessionId = searchParams.get('session_id');
+  const tier = searchParams.get('tier');
   const [generation, setGeneration] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isStripeSuccess, setIsStripeSuccess] = useState(false);
 
   useEffect(() => {
-    if (!generationId) return;
+    // Check if this is a Stripe success
+    if (sessionId && tier) {
+      setIsStripeSuccess(true);
+      setLoading(false);
+      return;
+    }
+
+    // Otherwise, handle generation success
+    if (!generationId) {
+      setLoading(false);
+      return;
+    }
 
     const fetchGeneration = async () => {
       try {
@@ -31,13 +46,84 @@ export default function SuccessPage() {
     };
 
     fetchGeneration();
-  }, [generationId]);
+  }, [generationId, sessionId, tier]);
 
-  if (loading || !generation) {
+  if (loading) {
     return (
       <div className="container py-20">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Stripe Checkout Success
+  if (isStripeSuccess) {
+    return (
+      <div className="container py-12">
+        <div className="mx-auto max-w-4xl space-y-6">
+          <div className="text-center">
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-500/10">
+              <CheckCircle2 className="h-10 w-10 text-green-500" />
+            </div>
+            <h1 className="mb-3 text-4xl font-bold">🎉 Payment Successful!</h1>
+            <p className="text-lg text-muted-foreground">
+              Welcome to your {tier ? tier.charAt(0).toUpperCase() + tier.slice(1) : 'Premium'} tier
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              Check your email for your API key and getting started instructions.
+            </p>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>What's Next?</CardTitle>
+              <CardDescription>Your account has been upgraded and is ready to use</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="flex items-center gap-3 rounded-lg border p-4">
+                  <Package className="h-8 w-8 text-primary" />
+                  <div>
+                    <p className="text-sm font-medium">API Access</p>
+                    <p className="text-lg font-bold">{tier ? tier.charAt(0).toUpperCase() + tier.slice(1) : 'Premium'} Tier</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 rounded-lg border p-4">
+                  <Shield className="h-8 w-8 text-green-500" />
+                  <div>
+                    <p className="text-sm font-medium">Status</p>
+                    <p className="text-lg font-bold">Active</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3 rounded-lg border p-4">
+                <h3 className="font-semibold">Getting Started:</h3>
+                <ol className="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
+                  <li>Check your email for your API key</li>
+                  <li>Review the documentation for your tier</li>
+                  <li>Start building your first project</li>
+                  <li>Join our Discord community for support</li>
+                </ol>
+              </div>
+
+              <div className="flex gap-3">
+                <Button className="flex-1" asChild>
+                  <a href="/docs">
+                    View Documentation
+                  </a>
+                </Button>
+                <Button variant="outline" className="flex-1" asChild>
+                  <a href={tier ? `/factory?tier=${tier}` : '/factory'}>
+                    Start Building
+                  </a>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     );
@@ -143,5 +229,15 @@ export default function SuccessPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function SuccessPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+      <AuthGuard requireAuth={true}>
+        <SuccessPageContent />
+      </AuthGuard>
+    </Suspense>
   );
 }

@@ -52,6 +52,8 @@ export interface IGeneration extends Document {
     status: 'pending' | 'confirmed' | 'failed' | 'refunded';
     timestamp: Date;
     confirmations: number;
+    stripeSessionId?: string;
+    stripePaymentIntentId?: string;
   };
 
   status: 'pending_payment' | 'payment_confirmed' | 'generating' | 'review_required' |
@@ -189,6 +191,8 @@ const GenerationSchema: Schema = new Schema({
     },
     timestamp: { type: Date, default: Date.now },
     confirmations: { type: Number, default: 0 },
+    stripeSessionId: { type: String, required: false },
+    stripePaymentIntentId: { type: String, required: false },
   },
 
   status: {

@@ -18,10 +18,15 @@ export interface ProjectConfig {
     duration: string;
   };
   saleConfig?: {
-    hardcap: string;
+    enabled: boolean;
     price: string;
+    startTime: string;
+    endTime: string;
   };
 }
+
+export type GenerationType = 'token' | 'dapp' | 'both';
+export type ProjectType = 'defi' | 'nft' | 'gaming' | 'social' | 'enterprise';
 
 export interface GeneratedArtifacts {
   projectId: string;

@@ -1,13 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { CheckCircle2, Clock, AlertTriangle } from 'lucide-react';
+import AuthGuard from '@/components/AuthGuard';
 
-export default function LaunchPage() {
+function LaunchPageContent() {
   const searchParams = useSearchParams();
   const generationId = searchParams.get('id');
   const [generation, setGeneration] = useState<any>(null);
@@ -168,5 +169,15 @@ export default function LaunchPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function LaunchPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+      <AuthGuard requireAuth={true}>
+        <LaunchPageContent />
+      </AuthGuard>
+    </Suspense>
   );
 }

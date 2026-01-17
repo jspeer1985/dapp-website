@@ -117,7 +117,7 @@ export default function PricingTiers() {
                     ))}
                   </ul>
 
-                  <Link href="/factory" className="block">
+                  <Link href={`/factory?tier=${tier.name.toLowerCase().replace(' ', '-')}`} className="block">
                     <Button
                       size="lg"
                       variant={tier.popular ? 'gradient' : 'outline'}

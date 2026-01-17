@@ -5,6 +5,7 @@ import { WalletContextProvider } from '@/components/WalletContextProvider'
 import WalletErrorBoundary from '@/components/ui/wallet-error-boundary'
 import Navbar from '@/components/Navbar'
 import OptikChatbot from '@/components/OptikChatbot'
+import AuthGuard from '@/components/AuthGuard'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -25,7 +26,11 @@ export default function RootLayout({
           <WalletContextProvider>
             <div className="relative z-10 flex flex-col min-h-screen">
               <Navbar />
-              <main className="flex-grow">{children}</main>
+              <main className="flex-grow">
+                <AuthGuard requireAuth={false}>
+                  {children}
+                </AuthGuard>
+              </main>
               <OptikChatbot />
             </div>
           </WalletContextProvider>

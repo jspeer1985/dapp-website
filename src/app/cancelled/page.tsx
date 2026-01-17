@@ -1,12 +1,14 @@
 'use client';
 
+import { useState, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { XCircle, ArrowLeft, RefreshCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import AuthGuard from '@/components/AuthGuard';
 
-export default function CancelledPage() {
+function CancelledPageContent() {
     const searchParams = useSearchParams();
     const jobId = searchParams.get('job_id');
 
@@ -53,4 +55,14 @@ export default function CancelledPage() {
             </motion.div>
         </div>
     );
+}
+
+export default function CancelledPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+      <AuthGuard requireAuth={true}>
+        <CancelledPageContent />
+      </AuthGuard>
+    </Suspense>
+  );
 }

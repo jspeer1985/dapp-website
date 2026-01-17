@@ -1,4 +1,12 @@
 import { GenerationType, ProjectType } from '@/types/generator';
+import OpenAI from 'openai';
+import Anthropic from '@anthropic-ai/sdk';
+
+export interface GeneratedFile {
+  path: string;
+  content: string;
+  type: 'contract' | 'frontend' | 'config' | 'documentation';
+}
 
 export interface AIServiceConfig {
   apiKey: string;
@@ -25,15 +33,48 @@ export interface AIGenerationResult {
   metadata?: Record<string, any>;
 }
 
+export interface DAppGenerationResult {
+  files: GeneratedFile[];
+  packageJson: any;
+  readme: string;
+  totalFiles: number;
+  totalLines: number;
+  tokensUsed?: number;
+}
+
+export interface SecurityAnalysisResult {
+  riskScore: number;
+  flags: Array<{
+    severity: 'low' | 'medium' | 'high' | 'critical';
+    type: string;
+    description: string;
+    line?: number;
+  }>;
+}
+
 export class AIService {
   private config: AIServiceConfig;
+  private openai?: OpenAI;
+  private anthropic?: Anthropic;
+  private provider: 'openai' | 'anthropic';
 
   constructor(config: AIServiceConfig) {
     this.config = config;
+    this.provider = (process.env.AI_PROVIDER as 'openai' | 'anthropic') || 'openai';
+
+    if (this.provider === 'openai') {
+      this.openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY || config.apiKey,
+      });
+    } else {
+      this.anthropic = new Anthropic({
+        apiKey: process.env.ANTHROPIC_API_KEY || config.apiKey,
+      });
+    }
   }
 
   private buildPrompt(projectType: ProjectType, tier: string, features: string[], tokenConfig?: any): string {
-    const basePrompt = `You are an expert Web3 developer and smart contract auditor. Create a complete, production-ready ${projectType} with the following specifications:
+    const basePrompt = `You are an expert Solana blockchain developer. Create a complete, production-ready ${projectType} dApp with the following specifications:
 
 PROJECT TYPE: ${projectType}
 TIER: ${tier}
@@ -148,11 +189,11 @@ REQUIREMENTS:
 
       const result = await response.json();
       return result;
-    } catch (error) {
+    } catch (error: any) {
       console.error('AI generation error:', error);
       return {
         success: false,
-        errors: [error.message || 'Unknown error occurred'],
+        errors: [error?.message || 'Unknown error occurred'],
       };
     }
   }
@@ -168,11 +209,11 @@ REQUIREMENTS:
       }
 
       return await response.json();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Validation error:', error);
       return {
         success: false,
-        errors: [error.message || 'Validation failed'],
+        errors: [error?.message || 'Validation failed'],
       };
     }
   }
@@ -188,9 +229,188 @@ REQUIREMENTS:
       }
 
       return await response.json();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Status check error:', error);
       throw error;
     }
   }
+
+  async generateDApp(params: {
+    projectName: string;
+    projectDescription: string;
+    projectType: ProjectType;
+    features: string[];
+    tokenConfig?: any;
+  }): Promise<DAppGenerationResult> {
+    try {
+      const prompt = `Generate a complete Solana dApp project with the following specifications:
+
+Project Name: ${params.projectName}
+Description: ${params.projectDescription}
+Type: ${params.projectType}
+Features: ${params.features.join(', ')}
+
+${params.tokenConfig ? `Token Configuration:
+- Name: ${params.tokenConfig.name}
+- Symbol: ${params.tokenConfig.symbol}
+- Supply: ${params.tokenConfig.supply}` : ''}
+
+Generate a production-ready Next.js 14 app with:
+1. Solana wallet integration (@solana/wallet-adapter-react)
+2. Smart contract interactions using @solana/web3.js
+3. Modern UI with Tailwind CSS
+4. TypeScript throughout
+5. Proper error handling and loading states
+6. Responsive design
+
+Return ONLY a JSON object with this exact structure:
+{
+  "files": [
+    {
+      "path": "src/app/page.tsx",
+      "content": "file content here",
+      "type": "frontend"
+    }
+  ],
+  "packageJson": {
+    "name": "${params.projectName.toLowerCase().replace(/\s+/g, '-')}",
+    "version": "1.0.0",
+    "dependencies": {}
+  },
+  "readme": "README content",
+  "totalFiles": 0,
+  "totalLines": 0
+}`;
+
+      let result: any;
+      let tokensUsed = 0;
+
+      if (this.provider === 'openai' && this.openai) {
+        const completion = await this.openai.chat.completions.create({
+          model: 'gpt-4-turbo-preview',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are an expert Solana dApp developer. Always respond with valid JSON only.'
+            },
+            {
+              role: 'user',
+              content: prompt
+            }
+          ],
+          response_format: { type: 'json_object' },
+          temperature: 0.7,
+          max_tokens: 8000,
+        });
+
+        tokensUsed = completion.usage?.total_tokens || 0;
+        const content = completion.choices[0]?.message?.content || '{}';
+        result = JSON.parse(content);
+      } else if (this.provider === 'anthropic' && this.anthropic) {
+        const completion = await this.anthropic.messages.create({
+          model: 'claude-3-5-sonnet-20241022',
+          max_tokens: 8000,
+          messages: [
+            {
+              role: 'user',
+              content: prompt
+            }
+          ],
+          system: 'You are an expert Solana dApp developer. Always respond with valid JSON only. Do not include any text before or after the JSON object.'
+        });
+
+        const textContent = completion.content[0];
+        if (textContent.type === 'text') {
+          result = JSON.parse(textContent.text);
+        }
+        tokensUsed = completion.usage.input_tokens + completion.usage.output_tokens;
+      } else {
+        throw new Error('No AI provider configured');
+      }
+
+      // Ensure proper structure
+      if (!result.files || !Array.isArray(result.files)) {
+        result.files = [];
+      }
+
+      if (!result.packageJson) {
+        result.packageJson = {
+          name: params.projectName.toLowerCase().replace(/\s+/g, '-'),
+          version: '1.0.0',
+          dependencies: {}
+        };
+      }
+
+      if (!result.readme) {
+        result.readme = `# ${params.projectName}\n\n${params.projectDescription}`;
+      }
+
+      result.totalFiles = result.files.length;
+      result.totalLines = result.files.reduce((sum: number, f: GeneratedFile) =>
+        sum + (f.content.split('\n').length), 0);
+      result.tokensUsed = tokensUsed;
+
+      return result as DAppGenerationResult;
+    } catch (error: any) {
+      console.error('AI generation error:', error);
+      throw new Error(`AI generation failed: ${error.message}`);
+    }
+  }
+
+  async analyzeCodeSecurity(files: GeneratedFile[]): Promise<SecurityAnalysisResult> {
+    try {
+      const flags: SecurityAnalysisResult['flags'] = [];
+      let riskScore = 0;
+
+      // Security pattern analysis
+      const dangerousPatterns = [
+        { pattern: /eval\s*\(/gi, severity: 'high' as const, type: 'eval-usage', points: 30, desc: 'Dangerous eval() usage detected' },
+        { pattern: /dangerouslySetInnerHTML/gi, severity: 'high' as const, type: 'xss-risk', points: 25, desc: 'XSS risk with dangerouslySetInnerHTML' },
+        { pattern: /localStorage\.setItem.*privateKey/gi, severity: 'critical' as const, type: 'key-storage', points: 40, desc: 'Private key stored in localStorage' },
+        { pattern: /\.innerHTML\s*=/gi, severity: 'medium' as const, type: 'xss-risk', points: 15, desc: 'Potential XSS with innerHTML' },
+        { pattern: /process\.env\.[A-Z_]+/gi, severity: 'low' as const, type: 'env-exposure', points: 5, desc: 'Environment variable usage - ensure not exposed to client' },
+        { pattern: /Math\.random\(\)/gi, severity: 'medium' as const, type: 'weak-random', points: 10, desc: 'Weak randomness - use crypto.randomBytes for security-critical operations' },
+      ];
+
+      for (const file of files) {
+        for (const { pattern, severity, type, points, desc } of dangerousPatterns) {
+          const matches = file.content.match(pattern);
+          if (matches) {
+            flags.push({
+              severity,
+              type,
+              description: `${desc} in ${file.path}`,
+              line: undefined
+            });
+            riskScore += points * matches.length;
+          }
+        }
+      }
+
+      // Normalize risk score to 0-100
+      riskScore = Math.min(100, riskScore);
+
+      return {
+        riskScore,
+        flags
+      };
+    } catch (error: any) {
+      console.error('Security analysis error:', error);
+      return {
+        riskScore: 0,
+        flags: []
+      };
+    }
+  }
 }
+
+// Create singleton instance
+const aiServiceInstance = new AIService({
+  apiKey: process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY || '',
+  model: 'gpt-4',
+  maxTokens: 8000,
+  temperature: 0.7
+});
+
+// Default export for the service
+export default aiServiceInstance;

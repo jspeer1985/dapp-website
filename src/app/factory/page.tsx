@@ -1,22 +1,29 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useWallet } from '@/hooks/useWallet';
 import ProjectFactory from '@/components/ProjectFactory';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Rocket, Wallet, Loader2 } from 'lucide-react';
+import AuthGuard from '@/components/AuthGuard';
 
-export default function FactoryPage() {
+function FactoryPageContent() {
   const { connected } = useWallet();
   const searchParams = useSearchParams();
   const [isProcessingTemplate, setIsProcessingTemplate] = useState(false);
   const [templateId, setTemplateId] = useState<string | null>(null);
+  const [selectedTier, setSelectedTier] = useState<string | null>(null);
 
   useEffect(() => {
     const cloneParam = searchParams.get('clone');
     const generationId = searchParams.get('generationId');
+    const tierParam = searchParams.get('tier');
+    
+    if (tierParam) {
+      setSelectedTier(tierParam);
+    }
     
     if (cloneParam) {
       setTemplateId(cloneParam);
@@ -203,8 +210,18 @@ export default function FactoryPage() {
           </p>
         </div>
 
-        <ProjectFactory />
+        <ProjectFactory selectedTier={selectedTier} />
       </div>
     </div>
+  );
+}
+
+export default function FactoryPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="animate-spin" /></div>}>
+      <AuthGuard requireAuth={true}>
+        <FactoryPageContent />
+      </AuthGuard>
+    </Suspense>
   );
 }

@@ -1,382 +1,310 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check, Zap, Sparkles, Crown, Code, Palette, Shield } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
-import { useState } from 'react';
+import {
+  Check,
+  X,
+  Zap,
+  Sparkles,
+  Crown,
+  Shield,
+  Building
+} from 'lucide-react';
 
-export type CompilerTier = 'starter' | 'builder' | 'launchpad' | 'agency' | 'enterprise';
+export type CompilerTier = 'builder' | 'launchpad' | 'agency' | 'enterprise';
 
 interface TierConfig {
   name: string;
   icon: any;
   color: string;
   priceUSD: number;
+  billing: string;
   target: string;
-  features: string[];
-  generatedElements: string;
-  numberOfDesigns: string;
-  technicalFeatures: string[];
-  securityLevel: string;
+  included: string[];
+  notIncluded: string[];
   popular?: boolean;
+  cta: string;
+  ctaAction: 'checkout' | 'contact';
 }
 
-// Pricing configurations using original script values
-const COMPILER_TIER_PRICING: Record<CompilerTier, TierConfig> = {
-  starter: {
-    name: 'Starter (Developer Access)',
-    icon: Zap,
-    color: 'from-green-500 to-emerald-500',
-    priceUSD: 39,
-    target: 'For solo builders, testing, hackathons',
-    features: [
-      'API Gateway access',
-      'Generator Service (basic templates)',
-      'Token contract generation',
-      'Manual deployment triggers',
-      'Shared infrastructure',
-      '1 active project'
-    ],
-    generatedElements: 'Token contract + Basic dApp scaffold',
-    numberOfDesigns: 'Basic project templates',
-    technicalFeatures: [
-      'Low rate limits',
-      'No staking / pools',
-      'No backend workers',
-      'No white-label'
-    ],
-    securityLevel: 'Basic security patterns',
-    popular: false
-  },
+// Subscription-based pricing tiers
+const PRICING_TIERS: Record<CompilerTier, TierConfig> = {
   builder: {
-    name: 'Builder (Startup Launch)',
-    icon: Sparkles,
+    name: 'Builder',
+    icon: Zap,
     color: 'from-blue-500 to-cyan-500',
     priceUSD: 149,
-    target: 'For MVP startups',
-    features: [
-      'Full generator templates',
-      'Automated deployment orchestrator',
-      'Backend APIs & DB provisioning',
-      'Project dashboard',
-      'Hosted environments',
-      'Up to 5 projects'
+    billing: '/month',
+    target: 'For solo developers and small teams',
+    included: [
+      '5 dApp generations per month',
+      'Basic templates access',
+      'Community support',
+      'Standard deployment',
+      'Basic analytics',
+      'Email support'
     ],
-    generatedElements: 'Complete dApp + Backend infrastructure',
-    numberOfDesigns: 'Advanced project templates',
-    technicalFeatures: [
-      'Shared workers',
-      'Moderate API & RPC limits',
-      'No staking pools'
+    notIncluded: [
+      'No advanced templates',
+      'No white-label options',
+      'No priority support',
+      'No custom domains'
     ],
-    securityLevel: 'Enhanced security patterns',
-    popular: true
-  },
-  launchpad: {
-    name: 'Launchpad (Public Token + Staking)',
-    icon: Crown,
-    color: 'from-purple-500 to-pink-500',
-    priceUSD: 399,
-    target: 'For real token launches',
-    features: [
-      'Token + staking pool contracts',
-      'Rewards distribution workers',
-      'Indexer services',
-      'Admin dashboards',
-      'Monitoring & alerts',
-      'Priority deployment queues',
-      'Up to 10 projects'
-    ],
-    generatedElements: 'DeFi platform + Staking + Analytics',
-    numberOfDesigns: 'Enterprise project templates',
-    technicalFeatures: [
-      'Semi-dedicated workers',
-      'Higher RPC throughput'
-    ],
-    securityLevel: 'Enterprise-grade patterns',
+    cta: 'Get Started',
+    ctaAction: 'checkout',
     popular: false
   },
+  launchpad: {
+    name: 'Launchpad',
+    icon: Sparkles,
+    color: 'from-purple-500 to-pink-500',
+    priceUSD: 399,
+    billing: '/month',
+    target: 'For startups launching tokens',
+    included: [
+      '20 dApp generations per month',
+      'All templates access',
+      'Priority support',
+      'Advanced deployment',
+      'Advanced analytics',
+      'Custom domains',
+      'API access',
+      'Team collaboration (5 users)'
+    ],
+    notIncluded: [
+      'Limited white-label options',
+      'No dedicated account manager'
+    ],
+    cta: 'Get Started',
+    ctaAction: 'checkout',
+    popular: true
+  },
   agency: {
-    name: 'Agency / White-Label Platform',
-    icon: Shield,
+    name: 'Agency',
+    icon: Crown,
     color: 'from-amber-500 to-orange-500',
     priceUSD: 1500,
-    target: 'For agencies, incubators, regional launchpads',
-    features: [
-      'White-label provisioning service',
-      'Custom domains & branding',
-      'Client sub-accounts',
-      'Project factories',
-      'Usage-based billing passthrough',
-      'Tenant isolation',
-      '25–100+ projects'
-    ],
-    generatedElements: 'White-label platform + Multi-tenant architecture',
-    numberOfDesigns: 'Custom branded templates',
-    technicalFeatures: [
-      'Dedicated infrastructure',
+    billing: '/month',
+    target: 'For agencies and incubators',
+    included: [
+      'Unlimited dApp generations',
+      'All templates + exclusive',
+      '24/7 dedicated support',
+      'Enterprise deployment',
+      'Custom analytics',
+      'White-label options',
+      'Advanced API access',
+      'Team collaboration (20 users)',
       'Custom integrations',
-      'Advanced analytics'
+      'Dedicated account manager',
+      'Custom contracts',
+      'Priority queue'
     ],
-    securityLevel: 'Agency-grade security',
+    notIncluded: [],
+    cta: 'Get Started',
+    ctaAction: 'checkout',
     popular: false
   },
   enterprise: {
-    name: 'Enterprise / Protocol Infrastructure',
-    icon: Shield,
-    color: 'from-red-500 to-rose-500',
+    name: 'Enterprise',
+    icon: Building,
+    color: 'from-slate-600 to-slate-800',
     priceUSD: 5000,
-    target: 'For funds, chains, regulated platforms',
-    features: [
-      'Dedicated service instances',
-      'Custom deployment pipelines',
-      'Governance & compliance modules',
-      'SLA guarantees',
-      'Priority engineering support',
-      'Unlimited projects (contractual)'
+    billing: '/month',
+    target: 'For large organizations',
+    included: [
+      'Everything in Agency',
+      'Unlimited everything',
+      'On-premise deployment',
+      'Custom blockchain support',
+      'SLA guarantee',
+      'Custom development',
+      'Training & onboarding',
+      'Compliance packages',
+      'Audit coordination',
+      'Custom branding',
+      'Dedicated infrastructure'
     ],
-    generatedElements: 'Custom enterprise solutions + Compliance modules',
-    numberOfDesigns: 'Unlimited custom designs',
-    technicalFeatures: [
-      'Dedicated instances',
-      'Custom pipelines',
-      'Compliance modules',
-      'SLA guarantees'
-    ],
-    securityLevel: 'Military-grade security',
+    notIncluded: [],
+    cta: 'Contact Sales',
+    ctaAction: 'contact',
     popular: false
   }
 };
 
 export default function DynamicPricingTiers() {
-  const [selectedTier, setSelectedTier] = useState<CompilerTier>('builder');
+  const [loading, setLoading] = useState<string | null>(null);
 
-  const handleTierSelect = (tier: CompilerTier) => {
-    setSelectedTier(tier);
+  // Handle CTA button clicks
+  const handleTierCTA = async (tier: CompilerTier, config: TierConfig) => {
+    setLoading(tier);
+
+    try {
+      if (config.ctaAction === 'contact') {
+        // Enterprise - redirect to contact page
+        window.location.href = '/contact?tier=enterprise';
+        return;
+      }
+
+      // Create Stripe checkout session using price_data
+      const response = await fetch('/api/billing/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tier: tier,
+          tierName: config.name,
+          price: config.priceUSD,
+          billing: 'monthly'
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to create checkout session');
+      }
+
+      const { url } = await response.json();
+
+      if (url) {
+        window.location.href = url;
+      } else {
+        throw new Error('No checkout URL received');
+      }
+    } catch (error) {
+      console.error('CTA handler error:', error);
+      alert(error instanceof Error ? error.message : 'Error processing request. Please try again.');
+    } finally {
+      setLoading(null);
+    }
   };
 
-  const currentTierConfig = COMPILER_TIER_PRICING[selectedTier];
-
   return (
-    <section className="py-20 bg-muted/30">
-      <div className="container">
-        <div className="mx-auto max-w-2xl text-center mb-16">
+    <section className="py-20 bg-[#0A0A0A]">
+      <div className="container max-w-7xl mx-auto px-4">
+        {/* Header */}
+        <div className="text-center mb-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="mb-4 text-3xl font-bold md:text-4xl">
-              Choose Your Compiler Tier
+            <h2 className="mb-4 text-4xl font-bold text-white md:text-5xl">
+              Simple, Transparent Pricing
             </h2>
-            <p className="text-lg text-muted-foreground">
-              Select the compiler tier that matches your project requirements
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              Choose the plan that fits your needs. All plans include core features.
             </p>
           </motion.div>
         </div>
 
-        {/* Tier Selection */}
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {Object.entries(COMPILER_TIER_PRICING).map(([tier, config]) => (
-            <Button
+        {/* Pricing Grid - 4 columns on desktop, 2 on tablet, 1 on mobile */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {Object.entries(PRICING_TIERS).map(([tier, config], index) => (
+            <motion.div
               key={tier}
-              variant={selectedTier === tier ? "default" : "outline"}
-              onClick={() => handleTierSelect(tier as CompilerTier)}
-              className={`px-4 py-2 text-sm ${
-                selectedTier === tier 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'bg-background text-foreground border-border'
-              }`}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="relative"
             >
-              {tier.charAt(0).toUpperCase() + tier.slice(1)}
-            </Button>
+              <Card className={`h-full bg-slate-900 border-slate-800 flex flex-col transition-all hover:border-slate-700 ${
+                config.popular ? 'border-purple-500/50' : ''
+              }`}>
+                {/* Popular Badge */}
+                {config.popular && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                    <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-1 text-sm font-semibold border-0">
+                      Most Popular
+                    </Badge>
+                  </div>
+                )}
+
+                <CardHeader className="text-center pt-8 pb-4">
+                  {/* Icon */}
+                  <div className="mb-4">
+                    <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${config.color}`}>
+                      <config.icon className="h-6 w-6 text-white" />
+                    </div>
+                  </div>
+
+                  {/* Name & Description */}
+                  <CardTitle className="text-2xl font-bold text-white">{config.name}</CardTitle>
+                  <CardDescription className="text-gray-400 mt-2">{config.target}</CardDescription>
+
+                  {/* Price */}
+                  <div className="mt-6">
+                    <div className="flex items-baseline justify-center gap-1">
+                      <span className="text-5xl font-bold text-white">${config.priceUSD}</span>
+                      <span className="text-gray-400 text-lg">{config.billing}</span>
+                    </div>
+                  </div>
+                </CardHeader>
+
+                <CardContent className="flex-1 flex flex-col px-6 pb-6">
+                  {/* Features List */}
+                  <div className="flex-1 space-y-3 mb-6">
+                    {config.included.map((feature, i) => (
+                      <div key={i} className="flex items-start gap-3">
+                        <Check className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                        <span className="text-gray-300 text-sm">{feature}</span>
+                      </div>
+                    ))}
+                    {config.notIncluded.map((feature, i) => (
+                      <div key={i} className="flex items-start gap-3">
+                        <X className="h-5 w-5 text-gray-600 shrink-0 mt-0.5" />
+                        <span className="text-gray-500 text-sm">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* CTA Button */}
+                  <Button
+                    size="lg"
+                    className={`w-full py-6 text-base font-semibold transition-all ${
+                      config.popular
+                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white'
+                        : config.ctaAction === 'contact'
+                        ? 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700'
+                        : 'bg-white hover:bg-gray-100 text-black'
+                    }`}
+                    onClick={() => handleTierCTA(tier as CompilerTier, config)}
+                    disabled={loading === tier}
+                  >
+                    {loading === tier ? (
+                      <div className="flex items-center gap-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
+                        Processing...
+                      </div>
+                    ) : (
+                      config.cta
+                    )}
+                  </Button>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
         </div>
 
-        {/* Selected Tier Display */}
+        {/* Footer Note */}
         <motion.div
-          key={selectedTier}
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="max-w-2xl mx-auto"
-        >
-          <Card className="relative h-full border-primary shadow-xl scale-105">
-            {currentTierConfig.popular && (
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                <Badge className="bg-primary text-primary-foreground px-3 py-1">
-                  Most Popular
-                </Badge>
-              </div>
-            )}
-
-            <CardHeader>
-              <div className="mb-4">
-                <div className={`inline-flex p-3 rounded-lg bg-gradient-to-br ${currentTierConfig.color}`}>
-                  <currentTierConfig.icon className="h-8 w-8 text-white" />
-                </div>
-              </div>
-              <CardTitle className="text-2xl">{currentTierConfig.name}</CardTitle>
-              <CardDescription>{currentTierConfig.target}</CardDescription>
-            </CardHeader>
-
-            <CardContent className="space-y-6">
-              <div>
-                <div className="mb-2 flex items-baseline gap-2">
-                  <span className="text-4xl font-bold">${currentTierConfig.priceUSD}</span>
-                  <span className="text-sm text-muted-foreground">One-time payment</span>
-                </div>
-              </div>
-
-              <div className="space-y-3 rounded-lg border bg-muted/50 p-4">
-                <div className="flex items-start gap-2">
-                  <Code className="h-5 w-5 text-primary shrink-0" />
-                  <div>
-                    <p className="text-sm font-medium">Generated Elements</p>
-                    <p className="text-xs text-muted-foreground">{currentTierConfig.generatedElements}</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2">
-                  <Palette className="h-5 w-5 text-primary shrink-0" />
-                  <div>
-                    <p className="text-sm font-medium">Designs</p>
-                    <p className="text-xs text-muted-foreground">{currentTierConfig.numberOfDesigns}</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2">
-                  <Shield className="h-5 w-5 text-primary shrink-0" />
-                  <div>
-                    <p className="text-sm font-medium">Security Level</p>
-                    <p className="text-xs text-muted-foreground">{currentTierConfig.securityLevel}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <h4 className="font-semibold text-lg mb-3">Features Included:</h4>
-                <ul className="space-y-2">
-                  {currentTierConfig.features.map((feature, index) => (
-                    <li key={index} className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-green-500 shrink-0" />
-                      <span className="text-sm">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="space-y-2">
-                <h4 className="font-semibold text-lg mb-3">Technical Features:</h4>
-                <ul className="space-y-2">
-                  {currentTierConfig.technicalFeatures.map((feature, index) => (
-                    <li key={index} className="flex items-center gap-2">
-                      <div className="h-2 w-2 rounded-full bg-primary" />
-                      <span className="text-sm">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* CTA Buttons */}
-              <div className="mt-6 space-y-3 pt-6 border-t">
-                <Button 
-                  className="w-full py-3 text-lg"
-                  onClick={() => window.location.href = '/auth/signup'}
-                >
-                  Get Started with {currentTierConfig.name}
-                </Button>
-                <div className="text-center">
-                  <Link 
-                    href={`/templates?tier=${selectedTier}`}
-                    className="text-sm text-muted-foreground hover:text-primary underline"
-                  >
-                    Browse {currentTierConfig.name} Templates
-                  </Link>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Additional Information */}
-        <div className="mt-12 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="bg-muted/50 rounded-lg p-6 max-w-2xl mx-auto">
-              <h3 className="text-lg font-semibold mb-4">Why Choose Dynamic Pricing?</h3>
-              <div className="grid md:grid-cols-2 gap-6 text-left">
-                <div>
-                  <h4 className="font-medium mb-2">🎯 Targeted Solutions</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Pay only for the features you need for your specific project type
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-medium mb-2">💰 Cost Effective</h4>
-                  <p className="text-sm text-muted-foreground">
-                    No unnecessary features - optimize your development budget
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-medium mb-2">🚀 Faster Development</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Get the right templates and tools for your specific use case
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-medium mb-2">🔒 Appropriate Security</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Security features matched to your project's complexity level
-                  </p>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Main CTA Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="mt-20"
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mt-12 text-center"
         >
-          <div className="bg-gradient-to-r from-primary to-primary/80 rounded-2xl p-12 text-center text-white max-w-4xl mx-auto">
-            <h3 className="text-3xl font-bold mb-4">
-              Ready to Build Your dApp?
-            </h3>
-            <p className="text-xl mb-8 opacity-90">
-              Choose your tier and start building professional Web3 applications today
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                size="lg" 
-                variant="secondary"
-                className="bg-white text-primary hover:bg-gray-100 px-8 py-4 text-lg"
-                onClick={() => window.location.href = '/auth/signup'}
-              >
-                Start Free Trial
-              </Button>
-              <Button 
-                size="lg" 
-                className="bg-white/20 border-2 border-white text-white hover:bg-white/30 px-8 py-4 text-lg"
-                onClick={() => window.location.href = '/templates'}
-              >
-                Browse Templates
-              </Button>
-            </div>
-            <div className="mt-6 text-sm opacity-80">
-              <p>✨ No credit card required for trial • Cancel anytime</p>
-            </div>
-          </div>
+          <p className="text-gray-500 text-sm">
+            All plans include security analysis, compliance checks, and 24h download access.
+            <br />
+            Need a custom solution? <Link href="/contact" className="text-purple-400 hover:text-purple-300 underline">Contact our team</Link>
+          </p>
         </motion.div>
       </div>
     </section>

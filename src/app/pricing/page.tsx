@@ -1,433 +1,395 @@
 'use client';
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { Check, X, Zap, Rocket, Crown, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Check, 
-  X, 
-  Star, 
-  Zap, 
-  Rocket, 
-  Crown, 
-  Users, 
-  Shield,
-  TrendingUp,
-  ShoppingCart,
-  ExternalLink
-} from 'lucide-react';
-import Link from 'next/link';
-
-// Template pricing data
-const templatePricing = {
-  // DeFi Templates
-  'defi-yield-farm': { name: 'DeFi Yield Farm', price: 299, category: 'DeFi' },
-  'defi-dex-exchange': { name: 'DEX Exchange', price: 349, category: 'DeFi' },
-  'defi-staking-pools': { name: 'Staking Pools Platform', price: 279, category: 'DeFi' },
-  'defi-lending-protocol': { name: 'Lending Protocol', price: 389, category: 'DeFi' },
-  'defi-cross-chain-bridge': { name: 'Cross-Chain Bridge', price: 449, category: 'DeFi' },
-  'defi-liquidity-mining': { name: 'Liquidity Mining Platform', price: 329, category: 'DeFi' },
-  'defi-yield-aggregator': { name: 'Yield Aggregator', price: 419, category: 'DeFi' },
-  'defi-options-protocol': { name: 'DeFi Options Protocol', price: 529, category: 'DeFi' },
-  'defi-synthetic-assets': { name: 'Synthetic Assets Platform', price: 459, category: 'DeFi' },
-  'defi-flash-loans': { name: 'Flash Loans Protocol', price: 379, category: 'DeFi' },
-
-  // NFT Templates
-  'nft-marketplace': { name: 'NFT Marketplace', price: 199, category: 'NFT' },
-  'nft-auction-house': { name: 'NFT Auction House', price: 249, category: 'NFT' },
-  'nft-staking-platform': { name: 'NFT Staking Platform', price: 179, category: 'NFT' },
-  'nft-gaming-assets': { name: 'NFT Gaming Assets', price: 229, category: 'NFT' },
-  'nft-music-platform': { name: 'NFT Music Platform', price: 199, category: 'NFT' },
-
-  // DAO Templates
-  'dao-governance-suite': { name: 'DAO Governance Suite', price: 399, category: 'DAO' },
-  'dao-treasury-manager': { name: 'DAO Treasury Manager', price: 349, category: 'DAO' },
-  'dao-voting-portal': { name: 'DAO Voting Portal', price: 279, category: 'DAO' },
-  'dao-reputation-system': { name: 'DAO Reputation System', price: 319, category: 'DAO' },
-  'dao-community-fund': { name: 'DAO Community Fund', price: 299, category: 'DAO' },
-
-  // Gaming Templates
-  'gaming-p2e-arena': { name: 'P2E Battle Arena', price: 429, category: 'Gaming' },
-  'gaming-virtual-world': { name: 'Virtual World Metaverse', price: 549, category: 'Gaming' },
-  'gaming-fantasy-sports': { name: 'Fantasy Sports League', price: 379, category: 'Gaming' },
-  'gaming-card-game': { name: 'Blockchain Card Game', price: 329, category: 'Gaming' },
-  'gaming-racing-game': { name: 'Web3 Racing Game', price: 389, category: 'Gaming' },
-
-  // Token Templates
-  'token-launchpad-pro': { name: 'Token Launchpad Pro', price: 499, category: 'Token' },
-  'token-staking-platform': { name: 'Token Staking Platform', price: 359, category: 'Token' },
-  'token-governance-system': { name: 'Token Governance System', price: 419, category: 'Token' },
-  'token-bridge-protocol': { name: 'Token Bridge Protocol', price: 529, category: 'Token' },
-  'token-farming-protocol': { name: 'Token Farming Protocol', price: 389, category: 'Token' },
-};
 
 // Subscription tiers
 const subscriptionTiers = [
   {
+    id: 'builder',
     name: 'Builder',
     price: 149,
-    monthly: true,
     icon: Zap,
     color: 'from-blue-500 to-cyan-500',
+    description: 'For solo developers and small teams',
     features: [
-      '5 dApp generations per month',
-      'Basic templates access',
-      'Community support',
-      'Standard deployment',
-      'Basic analytics',
-      'Email support'
+      { text: '5 dApp generations per month', included: true },
+      { text: 'Basic templates access', included: true },
+      { text: 'Community support', included: true },
+      { text: 'Standard deployment', included: true },
+      { text: 'Basic analytics', included: true },
+      { text: 'Email support', included: true },
+      { text: 'Advanced templates', included: false },
+      { text: 'White-label options', included: false },
+      { text: 'Priority support', included: false },
+      { text: 'Custom domains', included: false },
     ],
-    limitations: [
-      'No advanced templates',
-      'No white-label options',
-      'No priority support',
-      'No custom domains'
-    ],
-    popular: false
+    popular: false,
+    cta: 'Get Started',
+    ctaAction: 'checkout',
+    stripePriceId: 'price_builder_monthly' // Replace with your actual Stripe Price ID
   },
   {
+    id: 'launchpad',
     name: 'Launchpad',
     price: 399,
-    monthly: true,
     icon: Rocket,
     color: 'from-purple-500 to-pink-500',
+    description: 'For startups launching tokens',
     features: [
-      '20 dApp generations per month',
-      'All templates access',
-      'Priority support',
-      'Advanced deployment',
-      'Advanced analytics',
-      'Custom domains',
-      'API access',
-      'Team collaboration (5 users)'
+      { text: '20 dApp generations per month', included: true },
+      { text: 'All templates access', included: true },
+      { text: 'Priority support', included: true },
+      { text: 'Advanced deployment', included: true },
+      { text: 'Advanced analytics', included: true },
+      { text: 'Custom domains', included: true },
+      { text: 'API access', included: true },
+      { text: 'Team collaboration (5 users)', included: true },
+      { text: 'Limited white-label options', included: true },
+      { text: 'Dedicated account manager', included: false },
     ],
-    limitations: [
-      'Limited white-label options',
-      'No dedicated account manager'
-    ],
-    popular: true
+    popular: true,
+    cta: 'Get Started',
+    ctaAction: 'checkout',
+    stripePriceId: 'price_launchpad_monthly' // Replace with your actual Stripe Price ID
   },
   {
+    id: 'agency',
     name: 'Agency',
     price: 1500,
-    monthly: true,
     icon: Crown,
     color: 'from-amber-500 to-orange-500',
+    description: 'For agencies and incubators',
     features: [
-      'Unlimited dApp generations',
-      'All templates + exclusive',
-      '24/7 dedicated support',
-      'Enterprise deployment',
-      'Custom analytics',
-      'White-label options',
-      'Advanced API access',
-      'Team collaboration (20 users)',
-      'Custom integrations',
-      'Dedicated account manager',
-      'Custom contracts',
-      'Priority queue'
+      { text: 'Unlimited dApp generations', included: true },
+      { text: 'All templates + exclusive', included: true },
+      { text: '24/7 dedicated support', included: true },
+      { text: 'Enterprise deployment', included: true },
+      { text: 'Custom analytics', included: true },
+      { text: 'White-label options', included: true },
+      { text: 'Advanced API access', included: true },
+      { text: 'Team collaboration (20 users)', included: true },
+      { text: 'Custom integrations', included: true },
+      { text: 'Dedicated account manager', included: true },
+      { text: 'Custom contracts', included: true },
+      { text: 'Priority queue', included: true },
     ],
-    limitations: [],
-    popular: false
+    popular: false,
+    cta: 'Get Started',
+    ctaAction: 'checkout',
+    stripePriceId: 'price_agency_monthly' // Replace with your actual Stripe Price ID
   },
   {
+    id: 'enterprise',
     name: 'Enterprise',
     price: 5000,
-    monthly: true,
     icon: Shield,
     color: 'from-emerald-500 to-teal-500',
+    description: 'For large organizations',
     features: [
-      'Everything in Agency',
-      'Unlimited everything',
-      'On-premise deployment',
-      'Custom blockchain support',
-      'SLA guarantee',
-      'Custom development',
-      'Training & onboarding',
-      'Compliance packages',
-      'Audit coordination',
-      'Custom branding',
-      'Dedicated infrastructure'
+      { text: 'Everything in Agency', included: true },
+      { text: 'Unlimited everything', included: true },
+      { text: 'On-premise deployment', included: true },
+      { text: 'Custom blockchain support', included: true },
+      { text: 'SLA guarantee', included: true },
+      { text: 'Custom development', included: true },
+      { text: 'Training & onboarding', included: true },
+      { text: 'Compliance packages', included: true },
+      { text: 'Audit coordination', included: true },
+      { text: 'Custom branding', included: true },
+      { text: 'Dedicated infrastructure', included: true },
     ],
-    limitations: [],
-    popular: false
+    popular: false,
+    cta: 'Contact Sales',
+    ctaAction: 'contact',
+    stripePriceId: null
   }
 ];
 
 export default function PricingPage() {
-  const [selectedCategory, setSelectedCategory] = useState('all');
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
+  const [loadingTier, setLoadingTier] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
 
-  // Calculate category counts and prices
-  const categoryStats = Object.values(templatePricing).reduce((acc, template) => {
-    if (!acc[template.category]) {
-      acc[template.category] = { count: 0, totalValue: 0, avgPrice: 0 };
-    }
-    acc[template.category].count++;
-    acc[template.category].totalValue += template.price;
-    return acc;
-  }, {} as Record<string, { count: number; totalValue: number; avgPrice: number }>);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  // Calculate average prices
-  Object.keys(categoryStats).forEach(category => {
-    categoryStats[category].avgPrice = Math.round(categoryStats[category].totalValue / categoryStats[category].count);
-  });
-
-  // Filter templates by category
-  const filteredTemplates = Object.values(templatePricing).filter(
-    template => selectedCategory === 'all' || template.category === selectedCategory
-  );
-
-  // Calculate annual discount
   const getAnnualPrice = (monthlyPrice: number) => {
-    return Math.round(monthlyPrice * 12 * 0.8); // 20% discount for annual
+    return Math.round(monthlyPrice * 12 * 0.8);
   };
 
+  const handleCheckout = async (tier: typeof subscriptionTiers[0]) => {
+    if (tier.ctaAction === 'contact') {
+      window.location.href = '/contact?tier=enterprise';
+      return;
+    }
+
+    setLoadingTier(tier.id);
+    try {
+      const price = billingCycle === 'monthly' ? tier.price : getAnnualPrice(tier.price);
+
+      const response = await fetch('/api/billing/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tier: tier.id,
+          tierName: tier.name,
+          price: price,
+          billing: billingCycle,
+          stripePriceId: tier.stripePriceId
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to create checkout');
+      }
+
+      const { url } = await response.json();
+      if (url) {
+        window.location.href = url;
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      alert(error instanceof Error ? error.message : 'Error starting checkout');
+    } finally {
+      setLoadingTier(null);
+    }
+  };
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white">
+        <div className="fixed inset-0 -z-10">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-purple-500/10" />
+        </div>
+        <div className="border-b border-white/10">
+          <div className="container mx-auto px-4 py-16 text-center">
+            <div className="h-8 bg-slate-800 rounded animate-pulse mb-4"></div>
+            <div className="h-6 bg-slate-800 rounded animate-pulse max-w-2xl mx-auto"></div>
+          </div>
+        </div>
+        <div className="container mx-auto px-4 py-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="h-96 bg-slate-800 rounded-2xl animate-pulse"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-slate-950 text-white">
+      {/* Background */}
+      <div className="fixed inset-0 -z-10">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-purple-500/10" />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+      </div>
+
       {/* Header */}
-      <div className="bg-white border-b">
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Complete Pricing & Plans
-            </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Choose the perfect plan for your needs. From individual templates to enterprise solutions.
-            </p>
+      <div className="border-b border-white/10">
+        <div className="container mx-auto px-4 py-16 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            Simple, Transparent Pricing
+          </h1>
+          <p className="text-xl text-slate-400 max-w-2xl mx-auto">
+            Choose the plan that fits your needs. Scale as you grow.
+          </p>
+
+          {/* Billing Toggle */}
+          <div className="mt-10 inline-flex items-center gap-2 bg-slate-800/50 backdrop-blur rounded-full p-1.5 border border-white/10">
+            <button
+              onClick={() => setBillingCycle('monthly')}
+              className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${
+                billingCycle === 'monthly'
+                  ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg shadow-blue-500/50'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBillingCycle('annual')}
+              className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
+                billingCycle === 'annual'
+                  ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg shadow-purple-500/50'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Annual
+              <span className="px-2 py-0.5 bg-green-500/20 text-green-400 rounded-full text-xs font-semibold">
+                Save 20%
+              </span>
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-12">
-        {/* Pricing Navigation */}
-        <div className="flex justify-center mb-12">
-          <Tabs value="subscriptions" className="w-full max-w-4xl">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="subscriptions">Subscription Plans</TabsTrigger>
-              <TabsTrigger value="templates">Template Pricing</TabsTrigger>
-            </TabsList>
+      {/* Pricing Grid */}
+      <div className="container mx-auto px-4 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+          {subscriptionTiers.map((tier) => {
+            const Icon = tier.icon;
+            return (
+              <div key={tier.id} className="relative">
+                {/* Card */}
+                <div
+                  className={`h-full rounded-2xl p-6 backdrop-blur transition-all duration-300 hover:scale-105 ${
+                    tier.popular
+                      ? 'bg-gradient-to-b from-purple-500/20 to-blue-500/20 border-2 border-purple-500/50 shadow-xl shadow-purple-500/20'
+                      : 'bg-slate-800/50 border border-white/10'
+                  }`}
+                >
+                  {/* Popular Badge */}
+                  {tier.popular && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                      <span className="px-4 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold rounded-full shadow-lg">
+                        Most Popular
+                      </span>
+                    </div>
+                  )}
 
-            {/* Subscription Plans */}
-            <TabsContent value="subscriptions" className="mt-8">
-              {/* Billing Toggle */}
-              <div className="flex justify-center mb-8">
-                <div className="bg-white rounded-lg border p-1 flex">
-                  <button
-                    onClick={() => setBillingCycle('monthly')}
-                    className={`px-4 py-2 rounded-md transition-colors ${
-                      billingCycle === 'monthly'
-                        ? 'bg-blue-500 text-white'
-                        : 'text-gray-600 hover:text-gray-900'
-                    }`}
-                  >
-                    Monthly Billing
-                  </button>
-                  <button
-                    onClick={() => setBillingCycle('annual')}
-                    className={`px-4 py-2 rounded-md transition-colors ${
-                      billingCycle === 'annual'
-                        ? 'bg-blue-500 text-white'
-                        : 'text-gray-600 hover:text-gray-900'
-                    }`}
-                  >
-                    Annual Billing
-                    <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
-                      Save 20%
-                    </span>
-                  </button>
-                </div>
-              </div>
+                  {/* Tier Header */}
+                  <div className="text-center mb-6 pt-2">
+                    <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${tier.color} mb-4 shadow-lg`}>
+                      <Icon className="h-6 w-6 text-white" />
+                    </div>
 
-              {/* Subscription Tiers */}
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {subscriptionTiers.map((tier, index) => (
-                  <motion.div
-                    key={tier.name}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                  >
-                    <Card className={`relative h-full ${tier.popular ? 'border-2 border-blue-500 shadow-lg' : ''}`}>
-                      {tier.popular && (
-                        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                          <Badge className="bg-blue-500 text-white">
-                            Most Popular
-                          </Badge>
-                        </div>
+                    <h2 className="text-2xl font-bold mb-1">{tier.name}</h2>
+                    <p className="text-slate-400 text-sm">{tier.description}</p>
+
+                    {/* Price */}
+                    <div className="mt-4">
+                      <div className="flex items-baseline justify-center gap-1">
+                        <span className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                          ${billingCycle === 'monthly' ? tier.price : getAnnualPrice(tier.price)}
+                        </span>
+                        <span className="text-slate-400">
+                          /{billingCycle === 'monthly' ? 'mo' : 'yr'}
+                        </span>
+                      </div>
+                      {billingCycle === 'annual' && (
+                        <p className="text-green-400 text-sm mt-1 font-medium">
+                          Save ${tier.price * 12 - getAnnualPrice(tier.price)}/year
+                        </p>
                       )}
-                      
-                      <CardHeader className="text-center pb-4">
-                        <div className={`w-16 h-16 mx-auto mb-4 rounded-lg bg-gradient-to-r ${tier.color} flex items-center justify-center`}>
-                          <tier.icon className="w-8 h-8 text-white" />
-                        </div>
-                        <CardTitle className="text-2xl font-bold">{tier.name}</CardTitle>
-                        <div className="mt-4">
-                          <div className="text-4xl font-bold">
-                            ${billingCycle === 'monthly' ? tier.price : getAnnualPrice(tier.price)}
-                          </div>
-                          <div className="text-gray-600">
-                            {billingCycle === 'monthly' ? '/month' : '/year'}
-                          </div>
-                          {billingCycle === 'annual' && (
-                            <div className="text-sm text-green-600 mt-1">
-                              Save ${tier.price * 12 - getAnnualPrice(tier.price)} annually
-                            </div>
-                          )}
-                        </div>
-                      </CardHeader>
-                      
-                      <CardContent className="flex-1">
-                        <div className="space-y-3">
-                          {tier.features.map((feature, i) => (
-                            <div key={i} className="flex items-start gap-2">
-                              <Check className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                              <span className="text-sm text-gray-700">{feature}</span>
-                            </div>
-                          ))}
-                          {tier.limitations.map((limitation, i) => (
-                            <div key={i} className="flex items-start gap-2">
-                              <X className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
-                              <span className="text-sm text-gray-500">{limitation}</span>
-                            </div>
-                          ))}
-                        </div>
-                        
-                        <Button 
-                          className={`w-full mt-6 bg-gradient-to-r ${tier.color} hover:opacity-90`}
-                          size="lg"
-                        >
-                          Get Started
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-            </TabsContent>
+                    </div>
+                  </div>
 
-            {/* Template Pricing */}
-            <TabsContent value="templates" className="mt-8">
-              {/* Category Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-                <div className="bg-white rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-blue-600">10</div>
-                  <div className="text-sm text-gray-600">DeFi Templates</div>
-                  <div className="text-xs text-gray-500">Avg: ${categoryStats.DeFi?.avgPrice || 0}</div>
-                </div>
-                <div className="bg-white rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-purple-600">5</div>
-                  <div className="text-sm text-gray-600">NFT Templates</div>
-                  <div className="text-xs text-gray-500">Avg: ${categoryStats.NFT?.avgPrice || 0}</div>
-                </div>
-                <div className="bg-white rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-green-600">5</div>
-                  <div className="text-sm text-gray-600">DAO Templates</div>
-                  <div className="text-xs text-gray-500">Avg: ${categoryStats.DAO?.avgPrice || 0}</div>
-                </div>
-                <div className="bg-white rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-orange-600">5</div>
-                  <div className="text-sm text-gray-600">Gaming Templates</div>
-                  <div className="text-xs text-gray-500">Avg: ${categoryStats.Gaming?.avgPrice || 0}</div>
-                </div>
-                <div className="bg-white rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-red-600">5</div>
-                  <div className="text-sm text-gray-600">Token Templates</div>
-                  <div className="text-xs text-gray-500">Avg: ${categoryStats.Token?.avgPrice || 0}</div>
-                </div>
-              </div>
-
-              {/* Category Filter */}
-              <div className="flex justify-center mb-8">
-                <div className="bg-white rounded-lg border p-1 flex flex-wrap gap-1">
-                  {['all', 'DeFi', 'NFT', 'DAO', 'Gaming', 'Token'].map(category => (
-                    <button
-                      key={category}
-                      onClick={() => setSelectedCategory(category)}
-                      className={`px-4 py-2 rounded-md transition-colors ${
-                        selectedCategory === category
-                          ? 'bg-blue-500 text-white'
-                          : 'text-gray-600 hover:text-gray-900'
-                      }`}
-                    >
-                      {category === 'all' ? 'All Templates' : category}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Template Grid */}
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {filteredTemplates.map((template, index) => (
-                  <motion.div
-                    key={template.name}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.05 }}
+                  {/* CTA Button */}
+                  <button
+                    className={`w-full mb-6 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                      tier.popular
+                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-purple-500/50'
+                        : tier.ctaAction === 'contact'
+                          ? 'bg-slate-700 hover:bg-slate-600 text-white'
+                          : 'bg-slate-700/50 hover:bg-slate-700 text-white border border-white/10'
+                    } disabled:opacity-50 disabled:cursor-not-allowed`}
+                    onClick={() => handleCheckout(tier)}
+                    disabled={loadingTier === tier.id}
                   >
-                    <Card className="h-full hover:shadow-lg transition-shadow">
-                      <CardHeader>
-                        <div className="flex items-center justify-between">
-                          <Badge variant="outline">{template.category}</Badge>
-                          <div className="text-2xl font-bold text-green-600">${template.price}</div>
-                        </div>
-                        <CardTitle className="text-lg">{template.name}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-2">
-                          <div className="text-sm text-gray-600">
-                            One-time purchase with full source code
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            ✓ Smart contracts included
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            ✓ Frontend components
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            ✓ Documentation & deployment guides
-                          </div>
-                        </div>
-                        
-                        <div className="flex gap-2 mt-4">
-                          <Button variant="outline" size="sm" className="flex-1" asChild>
-                            <Link href={`/templates/preview/${template.name.toLowerCase().replace(/\s+/g, '-')}`}>
-                              Preview
-                            </Link>
-                          </Button>
-                          <Button size="sm" className="flex-1">
-                            <ShoppingCart className="w-4 h-4 mr-1" />
-                            Buy Now
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
+                    {loadingTier === tier.id ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <span className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
+                        Processing...
+                      </span>
+                    ) : (
+                      tier.cta
+                    )}
+                  </button>
 
-        {/* Value Proposition */}
-        <div className="mt-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white text-center">
-          <h2 className="text-3xl font-bold mb-4">
-            Get Started Today
+                  {/* Features List */}
+                  <div className="space-y-3">
+                    {tier.features.map((feature, idx) => (
+                      <div key={idx} className="flex items-start gap-3">
+                        {feature.included ? (
+                          <Check className="h-5 w-5 text-green-400 shrink-0 mt-0.5" />
+                        ) : (
+                          <X className="h-5 w-5 text-slate-600 shrink-0 mt-0.5" />
+                        )}
+                        <span className={`text-sm ${
+                          feature.included ? 'text-slate-300' : 'text-slate-600'
+                        }`}>
+                          {feature.text}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* FAQ Section */}
+      <div className="border-t border-white/10">
+        <div className="container mx-auto px-4 py-16 max-w-4xl">
+          <h2 className="text-3xl font-bold text-center mb-12 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            Frequently Asked Questions
           </h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Join thousands of developers building the future of decentralized applications
+
+          <div className="space-y-6">
+            {[
+              {
+                q: 'What payment methods do you accept?',
+                a: 'We accept all major credit cards (Visa, Mastercard, American Express) through Stripe, as well as SOL cryptocurrency payments for added flexibility.'
+              },
+              {
+                q: 'Can I change my plan later?',
+                a: 'Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately and we\'ll prorate any differences.'
+              },
+              {
+                q: 'What\'s included in "dApp generations"?',
+                a: 'Each generation includes a complete dApp with smart contracts, frontend components, deployment scripts, and documentation. You own the full source code.'
+              },
+              {
+                q: 'Do you offer refunds?',
+                a: 'Yes, we offer a 14-day money-back guarantee for all subscription plans. If you\'re not satisfied, contact us for a full refund.'
+              }
+            ].map((faq, idx) => (
+              <div key={idx} className="bg-slate-800/50 backdrop-blur rounded-xl p-6 border border-white/10 hover:border-purple-500/50 transition-all">
+                <h3 className="text-lg font-semibold mb-2 text-white">{faq.q}</h3>
+                <p className="text-slate-400">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom CTA */}
+      <div className="border-t border-white/10 bg-gradient-to-b from-transparent to-slate-900/50">
+        <div className="container mx-auto px-4 py-16 text-center max-w-3xl">
+          <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            Ready to start building?
+          </h2>
+          <p className="text-slate-400 mb-8 max-w-xl mx-auto">
+            Join thousands of developers building the future of decentralized applications.
           </p>
-          <div className="flex gap-4 justify-center">
-            <Button size="lg" variant="outline" className="bg-white text-blue-600 hover:bg-gray-100">
-              Start Free Trial
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button
+              size="lg"
+              onClick={() => window.location.href = '/factory'}
+            >
+              Start Building Free
             </Button>
-            <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100">
-              Schedule Demo
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => window.location.href = '/contact'}
+            >
+              Talk to Sales
             </Button>
           </div>
+          <p className="text-muted-foreground text-sm mt-6">
+            No credit card required for trial - 14-day money-back guarantee
+          </p>
         </div>
       </div>
     </div>

@@ -6,8 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Check, Download, ExternalLink, Mail } from 'lucide-react';
 import Link from 'next/link';
+import { Suspense } from 'react';
 
-export default function TemplateSuccessPage() {
+function TemplateSuccessPageContent() {
   const searchParams = useSearchParams();
   const templateId = searchParams.get('templateId');
   const templateName = searchParams.get('templateName') || 'Template';
@@ -104,5 +105,13 @@ export default function TemplateSuccessPage() {
         </Card>
       </motion.div>
     </div>
+  );
+}
+
+export default function TemplateSuccessPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+      <TemplateSuccessPageContent />
+    </Suspense>
   );
 }

@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
         const packageResult = await FilePackagingService.packageProject({
           generationId: generation.generationId,
           projectName: generation.projectName,
-          files: generation.generatedCode.files,
+          files: generation.generatedCode.files as any,
           packageJson: generation.generatedCode.packageJson,
           readme: generation.generatedCode.readme || '',
         });

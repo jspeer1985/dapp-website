@@ -1793,35 +1793,37 @@ export default function TemplatePreview() {
                     </Card>
 
                     {/* Technical Specifications */}
-                    <Card className="bg-slate-900 border-slate-800">
-                        <CardHeader>
-                            <CardTitle className="text-2xl text-white">Technical Specifications</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                <div>
-                                    <h4 className="text-white font-semibold mb-2">Blockchain</h4>
-                                    <p className="text-gray-400">{template.technicalSpecs.blockchain}</p>
+                    {template.technicalSpecs && (
+                        <Card className="bg-slate-900 border-slate-800">
+                            <CardHeader>
+                                <CardTitle className="text-2xl text-white">Technical Specifications</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                    <div>
+                                        <h4 className="text-white font-semibold mb-2">Blockchain</h4>
+                                        <p className="text-gray-400">{template.technicalSpecs.blockchain}</p>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-white font-semibold mb-2">Language</h4>
+                                        <p className="text-gray-400">{template.technicalSpecs.language}</p>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-white font-semibold mb-2">Framework</h4>
+                                        <p className="text-gray-400">{template.technicalSpecs.framework}</p>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-white font-semibold mb-2">Smart Contracts</h4>
+                                        <ul className="text-gray-400 space-y-1">
+                                            {template.technicalSpecs.smartContracts?.map((contract: string, i: number) => (
+                                                <li key={i}>• {contract}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h4 className="text-white font-semibold mb-2">Language</h4>
-                                    <p className="text-gray-400">{template.technicalSpecs.language}</p>
-                                </div>
-                                <div>
-                                    <h4 className="text-white font-semibold mb-2">Framework</h4>
-                                    <p className="text-gray-400">{template.technicalSpecs.framework}</p>
-                                </div>
-                                <div>
-                                    <h4 className="text-white font-semibold mb-2">Smart Contracts</h4>
-                                    <ul className="text-gray-400 space-y-1">
-                                        {template.technicalSpecs.smartContracts.map((contract: string, i: number) => (
-                                            <li key={i}>• {contract}</li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
+                            </CardContent>
+                        </Card>
+                    )}
 
                     {/* Code Preview */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
