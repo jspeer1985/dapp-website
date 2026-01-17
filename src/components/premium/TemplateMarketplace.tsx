@@ -44,391 +44,855 @@ interface Template {
 }
 
 const templates: Template[] = [
+  // DeFi Templates (10 total)
   {
     id: 'defi-yield-farm',
     name: 'DeFi Yield Farm',
     category: 'DeFi',
     price: 299,
-    description: 'Complete yield farming protocol with multiple pools and rewards',
+    description: 'Multi-pool yield farming protocol with auto-compounding, governance tokens, and analytics.',
     features: [
-      'Multi-pool yield farming',
-      'Dynamic reward distribution',
-      'LP token staking',
-      'Governance integration',
-      'Advanced analytics dashboard'
+      'Auto-compounding',
+      'Multi-pool Support',
+      'Governance Token',
+      'Analytics Dashboard'
     ],
     preview: {
       image: '/templates/defi-yield-preview.png',
-      code: `// Yield Farm Contract
-contract YieldFarm {
-    mapping(address => uint256) public stakedLP;
-    mapping(address => uint256) public rewards;
-    
-    function stake(uint256 amount) external {
-        // Staking logic
-    }
+      code: `// Yield Farming Contract
+import { Program, web3 } from '@project-serum/anchor';
+
+export class YieldFarm {
+  static async stake(ctx: web3.Context, amount: number) {
+    // Staking logic with auto-compounding
+  }
 }`,
       demo: 'https://demo.defi-yield-farm.com'
     },
     difficulty: 'Advanced',
     popularity: 95,
     downloads: 1247,
-    rating: 4.8,
+    rating: 4.9,
     tags: ['DeFi', 'Yield', 'Staking', 'Governance']
   },
+  {
+    id: 'defi-dex-exchange',
+    name: 'DEX Exchange',
+    category: 'DeFi',
+    price: 349,
+    description: 'Decentralized exchange with limit orders, order book, and advanced trading features.',
+    features: [
+      'Limit Orders',
+      'Order Book',
+      'Advanced Trading',
+      'Liquidity Pools'
+    ],
+    preview: {
+      image: '/templates/dex-exchange-preview.png',
+      code: `// DEX Exchange Contract
+export class DEX {
+  static async swap(ctx: web3.Context, tokenA: string, tokenB: string, amount: number) {
+    // Advanced swap logic with limit orders
+  }
+}`,
+      demo: 'https://demo.dex-exchange.com'
+    },
+    difficulty: 'Advanced',
+    popularity: 88,
+    downloads: 678,
+    rating: 4.7,
+    tags: ['DeFi', 'DEX', 'Trading', 'AMM']
+  },
+  {
+    id: 'defi-staking-pools',
+    name: 'Staking Pools Platform',
+    category: 'DeFi',
+    price: 279,
+    description: 'Multi-token staking platform with flexible rewards, lock periods, and governance.',
+    features: [
+      'Multi-token Staking',
+      'Flexible Rewards',
+      'Lock Periods',
+      'Governance Integration'
+    ],
+    preview: {
+      image: '/templates/staking-pools-preview.png',
+      code: `// Staking Pools Contract
+export class StakingPool {
+  static async stake(ctx: web3.Context, amount: number, lockPeriod: number) {
+    // Flexible staking with rewards
+  }
+}`,
+      demo: 'https://demo.staking-pools.com'
+    },
+    difficulty: 'Intermediate',
+    popularity: 79,
+    downloads: 534,
+    rating: 4.6,
+    tags: ['DeFi', 'Staking', 'Rewards', 'Yield']
+  },
+  {
+    id: 'defi-lending-protocol',
+    name: 'Lending Protocol',
+    category: 'DeFi',
+    price: 389,
+    description: 'Decentralized lending protocol with collateralized loans and interest rates.',
+    features: [
+      'Collateralized Loans',
+      'Interest Rates',
+      'Risk Management',
+      'Liquidation Protection'
+    ],
+    preview: {
+      image: '/templates/lending-protocol-preview.png',
+      code: `// Lending Protocol Contract
+export class LendingProtocol {
+  static async borrow(ctx: web3.Context, collateral: number, amount: number) {
+    // Lending and borrowing logic
+  }
+}`,
+      demo: 'https://demo.lending-protocol.com'
+    },
+    difficulty: 'Advanced',
+    popularity: 81,
+    downloads: 567,
+    rating: 4.7,
+    tags: ['DeFi', 'Lending', 'Borrowing', 'Collateral']
+  },
+  {
+    id: 'defi-cross-chain-bridge',
+    name: 'Cross-Chain Bridge',
+    category: 'DeFi',
+    price: 449,
+    description: 'Cross-chain bridge protocol with multi-asset support and security features.',
+    features: [
+      'Multi-asset Support',
+      'Security Features',
+      'Cross-chain Transfers',
+      'Validator Network'
+    ],
+    preview: {
+      image: '/templates/bridge-preview.png',
+      code: `// Cross-Chain Bridge Contract
+export class CrossChainBridge {
+  static async bridge(ctx: web3.Context, asset: string, targetChain: string) {
+    // Secure cross-chain bridging
+  }
+}`,
+      demo: 'https://demo.cross-chain-bridge.com'
+    },
+    difficulty: 'Advanced',
+    popularity: 73,
+    downloads: 389,
+    rating: 4.8,
+    tags: ['DeFi', 'Bridge', 'Cross-chain', 'Security']
+  },
+  {
+    id: 'defi-liquidity-mining',
+    name: 'Liquidity Mining Platform',
+    category: 'DeFi',
+    price: 329,
+    description: 'Advanced liquidity mining with dynamic rewards, pool creation, and yield optimization.',
+    features: [
+      'Dynamic Rewards',
+      'Pool Creation',
+      'Yield Optimization',
+      'Liquidity Analytics'
+    ],
+    preview: {
+      image: '/templates/liquidity-mining-preview.png',
+      code: `// Liquidity Mining Contract
+export class LiquidityMining {
+  static async calculateRewards(ctx: web3.Context, amount: number, duration: number) {
+    // Dynamic reward calculation
+  }
+}`,
+      demo: 'https://demo.liquidity-mining.com'
+    },
+    difficulty: 'Advanced',
+    popularity: 84,
+    downloads: 723,
+    rating: 4.7,
+    tags: ['DeFi', 'Mining', 'Rewards', 'Yield']
+  },
+  {
+    id: 'defi-yield-aggregator',
+    name: 'Yield Aggregator',
+    category: 'DeFi',
+    price: 419,
+    description: 'Multi-protocol yield aggregator that automatically finds and allocates to best yields.',
+    features: [
+      'Auto-compounding',
+      'Multi-protocol',
+      'Risk Assessment',
+      'Portfolio Management'
+    ],
+    preview: {
+      image: '/templates/yield-aggregator-preview.png',
+      code: `// Yield Aggregator Contract
+export class YieldAggregator {
+  static async findBestYield(ctx: web3.Context, amount: number, riskLevel: string) {
+    // Automatic yield optimization
+  }
+}`,
+      demo: 'https://demo.yield-aggregator.com'
+    },
+    difficulty: 'Advanced',
+    popularity: 92,
+    downloads: 891,
+    rating: 4.8,
+    tags: ['DeFi', 'Yield', 'Aggregator', 'Auto-compound']
+  },
+  {
+    id: 'defi-options-protocol',
+    name: 'DeFi Options Protocol',
+    category: 'DeFi',
+    price: 529,
+    description: 'Decentralized options trading with European/American options, Greeks calculator, and liquidity pools.',
+    features: [
+      'Options Trading',
+      'Greeks Calculator',
+      'Liquidity Pools',
+      'Risk Management'
+    ],
+    preview: {
+      image: '/templates/options-protocol-preview.png',
+      code: `// Options Trading Contract
+export class OptionsProtocol {
+  static async calculatePremium(ctx: web3.Context, strikePrice: number, currentPrice: number) {
+    // Black-Scholes options pricing
+  }
+}`,
+      demo: 'https://demo.options-protocol.com'
+    },
+    difficulty: 'Advanced',
+    popularity: 67,
+    downloads: 445,
+    rating: 4.6,
+    tags: ['DeFi', 'Options', 'Trading', 'Greeks']
+  },
+  {
+    id: 'defi-synthetic-assets',
+    name: 'Synthetic Assets Platform',
+    category: 'DeFi',
+    price: 459,
+    description: 'Create and trade synthetic assets with price feeds, collateralization, and minting/burning.',
+    features: [
+      'Synthetic Assets',
+      'Price Feeds',
+      'Collateralization',
+      'Mint/Burn'
+    ],
+    preview: {
+      image: '/templates/synthetic-assets-preview.png',
+      code: `// Synthetic Assets Contract
+export class SyntheticAssets {
+  static async mintSynthetic(ctx: web3.Context, collateral: number, targetPrice: number) {
+    // Synthetic asset minting
+  }
+}`,
+      demo: 'https://demo.synthetic-assets.com'
+    },
+    difficulty: 'Advanced',
+    popularity: 58,
+    downloads: 334,
+    rating: 4.5,
+    tags: ['DeFi', 'Synthetic', 'Assets', 'Collateral']
+  },
+  {
+    id: 'defi-flash-loans',
+    name: 'Flash Loans Protocol',
+    category: 'DeFi',
+    price: 379,
+    description: 'Arbitrage flash loans with instant execution, collateral-free borrowing, and fee optimization.',
+    features: [
+      'Flash Loans',
+      'Arbitrage',
+      'Instant Execution',
+      'Fee Optimization'
+    ],
+    preview: {
+      image: '/templates/flash-loans-preview.png',
+      code: `// Flash Loans Contract
+export class FlashLoans {
+  static async executeFlashLoan(ctx: web3.Context, amount: number, arbitrageOpportunity: any) {
+    // Instant arbitrage execution
+  }
+}`,
+      demo: 'https://demo.flash-loans.com'
+    },
+    difficulty: 'Advanced',
+    popularity: 73,
+    downloads: 512,
+    rating: 4.7,
+    tags: ['DeFi', 'Flash Loans', 'Arbitrage', 'Trading']
+  },
+  // NFT Templates (5 total)
   {
     id: 'nft-marketplace',
     name: 'NFT Marketplace',
     category: 'NFT',
     price: 199,
-    description: 'Full-featured NFT marketplace with bidding and royalties',
+    description: 'Complete NFT marketplace with auctions, instant buy, royalties, and collection launchpad.',
     features: [
-      'NFT minting and trading',
-      'Auction system',
-      'Creator royalties',
-      'Collection management',
-      'Advanced search filters'
+      'Auctions & Instant Buy',
+      'Creator Royalties',
+      'Collection Launchpad',
+      'Advanced Search'
     ],
     preview: {
       image: '/templates/nft-marketplace-preview.png',
-      code: `// NFT Marketplace
-contract NFTMarketplace {
-    struct Listing {
-        address nftContract;
-        uint256 tokenId;
-        uint256 price;
-    }
-    
-    function createListing(...) external {
-        // Listing logic
-    }
+      code: `// NFT Marketplace Contract
+export class NFTMarketplace {
+  static async createListing(ctx: web3.Context, nftContract: string, tokenId: number, price: number) {
+    // NFT listing creation
+  }
 }`,
       demo: 'https://demo.nft-marketplace.com'
     },
     difficulty: 'Intermediate',
-    popularity: 88,
+    popularity: 89,
     downloads: 892,
-    rating: 4.6,
+    rating: 4.7,
     tags: ['NFT', 'Marketplace', 'Auction', 'Royalties']
   },
   {
-    id: 'dao-governance',
-    name: 'DAO Governance',
-    category: 'DAO',
+    id: 'nft-auction-house',
+    name: 'NFT Auction House',
+    category: 'NFT',
     price: 249,
-    description: 'Complete DAO with voting, proposals, and treasury management',
+    description: 'Advanced auction platform with bidding wars, reserve prices, and timed auctions.',
     features: [
-      'On-chain voting',
-      'Proposal system',
-      'Treasury management',
-      'Delegation system',
-      'Quorum-based decisions'
+      'Bidding Wars',
+      'Reserve Prices',
+      'Timed Auctions',
+      'Advanced Analytics'
+    ],
+    preview: {
+      image: '/templates/nft-auction-house-preview.png',
+      code: `// NFT Auction House Contract
+export class AuctionHouse {
+  static async createAuction(ctx: web3.Context, nftContract: string, tokenId: number, reservePrice: number) {
+    // Advanced auction creation
+  }
+}`,
+      demo: 'https://demo.nft-auction-house.com'
+    },
+    difficulty: 'Intermediate',
+    popularity: 67,
+    downloads: 543,
+    rating: 4.6,
+    tags: ['NFT', 'Auction', 'Bidding', 'Analytics']
+  },
+  {
+    id: 'nft-staking-platform',
+    name: 'NFT Staking Platform',
+    category: 'NFT',
+    price: 179,
+    description: 'Stake your NFTs to earn rewards, governance tokens, and exclusive benefits.',
+    features: [
+      'NFT Staking',
+      'Reward Distribution',
+      'Governance Access',
+      'Exclusive Benefits'
+    ],
+    preview: {
+      image: '/templates/nft-staking-platform-preview.png',
+      code: `// NFT Staking Contract
+export class NFTStaking {
+  static async stakeNFT(ctx: web3.Context, nftContract: string, tokenId: number) {
+    // NFT staking with rewards
+  }
+}`,
+      demo: 'https://demo.nft-staking-platform.com'
+    },
+    difficulty: 'Intermediate',
+    popularity: 45,
+    downloads: 312,
+    rating: 4.5,
+    tags: ['NFT', 'Staking', 'Rewards', 'Governance']
+  },
+  {
+    id: 'nft-gaming-assets',
+    name: 'NFT Gaming Assets',
+    category: 'NFT',
+    price: 229,
+    description: 'Gaming NFT platform with in-game assets, character skins, and virtual items.',
+    features: [
+      'In-game Assets',
+      'Character Skins',
+      'Virtual Items',
+      'Game Integration'
+    ],
+    preview: {
+      image: '/templates/nft-gaming-assets-preview.png',
+      code: `// Gaming NFT Contract
+export class GamingAssets {
+  static async mintGameAsset(ctx: web3.Context, assetType: string, rarity: number) {
+    // Gaming asset minting
+  }
+}`,
+      demo: 'https://demo.nft-gaming-assets.com'
+    },
+    difficulty: 'Intermediate',
+    popularity: 82,
+    downloads: 678,
+    rating: 4.7,
+    tags: ['NFT', 'Gaming', 'Assets', 'Skins']
+  },
+  {
+    id: 'nft-music-platform',
+    name: 'NFT Music Platform',
+    category: 'NFT',
+    price: 199,
+    description: 'Music NFT marketplace for artists to sell songs, albums, and exclusive content.',
+    features: [
+      'Music NFTs',
+      'Artist Royalties',
+      'Exclusive Content',
+      'Fan Engagement'
+    ],
+    preview: {
+      image: '/templates/nft-music-platform-preview.png',
+      code: `// Music NFT Contract
+export class MusicNFT {
+  static async mintMusicNFT(ctx: web3.Context, artist: string, songTitle: string, audioUrl: string) {
+    // Music NFT minting
+  }
+}`,
+      demo: 'https://demo.nft-music-platform.com'
+    },
+    difficulty: 'Intermediate',
+    popularity: 38,
+    downloads: 234,
+    rating: 4.4,
+    tags: ['NFT', 'Music', 'Artists', 'Royalties']
+  },
+
+  // DAO Templates (5 total)
+  {
+    id: 'dao-governance-suite',
+    name: 'DAO Governance Suite',
+    category: 'DAO',
+    price: 399,
+    description: 'Comprehensive DAO governance with voting, treasury management, proposal system, and delegation.',
+    features: [
+      'On-chain Voting',
+      'Treasury Management',
+      'Proposal System',
+      'Delegation'
     ],
     preview: {
       image: '/templates/dao-governance-preview.png',
-      code: `// DAO Governance
-contract DAO {
-    struct Proposal {
-        uint256 id;
-        string description;
-        uint256 votesFor;
-        uint256 votesAgainst;
-    }
-    
-    function vote(uint256 proposalId, bool support) external {
-        // Voting logic
-    }
+      code: `// DAO Governance Contract
+export class DAOGovernance {
+  static async createProposal(ctx: web3.Context, title: string, description: string, votingPeriod: number) {
+    // DAO proposal creation
+  }
 }`,
       demo: 'https://demo.dao-governance.com'
     },
     difficulty: 'Advanced',
-    popularity: 82,
-    downloads: 623,
-    rating: 4.7,
+    popularity: 94,
+    downloads: 723,
+    rating: 4.8,
     tags: ['DAO', 'Governance', 'Voting', 'Treasury']
   },
   {
-    id: 'token-launchpad',
-    name: 'Token Launchpad',
-    category: 'Token',
-    price: 149,
-    description: 'Complete token launch platform with presale and vesting',
+    id: 'dao-treasury-manager',
+    name: 'DAO Treasury Manager',
+    category: 'DAO',
+    price: 349,
+    description: 'Advanced treasury management with multi-sig, budget allocation, and financial reporting.',
     features: [
-      'Token creation wizard',
-      'Presale mechanism',
-      'Vesting schedules',
-      'Anti-bot protection',
-      'Liquidity lock'
+      'Multi-sig Wallet',
+      'Budget Allocation',
+      'Financial Reporting',
+      'Fund Management'
     ],
     preview: {
-      image: '/templates/token-launchpad-preview.png',
-      code: `// Token Launchpad
-contract TokenLaunchpad {
-    struct Presale {
-        uint256 tokensForSale;
-        uint256 pricePerToken;
-        uint256 startTime;
-        uint256 endTime;
-    }
-    
-    function buyTokens(uint256 amount) external payable {
-        // Purchase logic
-    }
+      image: '/templates/dao-treasury-preview.png',
+      code: `// DAO Treasury Contract
+export class DAOTreasury {
+  static async allocateFunds(ctx: web3.Context, amount: number, recipient: string, purpose: string) {
+    // Treasury fund allocation
+  }
 }`,
-      demo: 'https://demo.token-launchpad.com'
-    },
-    difficulty: 'Intermediate',
-    popularity: 91,
-    downloads: 1567,
-    rating: 4.9,
-    tags: ['Token', 'Launchpad', 'Presale', 'Vesting']
-  },
-  {
-    id: 'gaming-platform',
-    name: 'Gaming Platform',
-    category: 'Gaming',
-    price: 399,
-    description: 'Web3 gaming platform with NFTs and play-to-earn mechanics',
-    features: [
-      'NFT game assets',
-      'Play-to-earn rewards',
-      'Tournament system',
-      'Leaderboard',
-      'In-game marketplace'
-    ],
-    preview: {
-      image: '/templates/gaming-platform-preview.png',
-      code: `// Gaming Platform
-contract GamePlatform {
-    struct GameAsset {
-        uint256 tokenId;
-        uint256 rarity;
-        uint256 power;
-    }
-    
-    function battle(uint256[] memory assets) external {
-        // Battle logic
-    }
-}`,
-      demo: 'https://demo.gaming-platform.com'
+      demo: 'https://demo.dao-treasury.com'
     },
     difficulty: 'Advanced',
     popularity: 78,
-    downloads: 445,
-    rating: 4.5,
-    tags: ['Gaming', 'NFT', 'P2E', 'Tournament']
-  },
-  {
-    id: 'dex-exchange',
-    name: 'DEX Exchange',
-    category: 'DeFi',
-    price: 349,
-    description: 'Decentralized exchange with AMM and advanced trading features',
-    features: [
-      'AMM liquidity pools',
-      'Limit orders',
-      'Trading charts',
-      'Yield farming',
-      'Cross-chain swaps'
-    ],
-    preview: {
-      image: '/templates/dex-exchange-preview.png',
-      code: `// DEX Exchange
-contract DEX {
-    struct Pool {
-        address tokenA;
-        address tokenB;
-        uint256 reserveA;
-        uint256 reserveB;
-    }
-    
-    function swap(address tokenIn, uint256 amountIn) external {
-        // Swap logic
-    }
-}`,
-      demo: 'https://demo.dex-exchange.com'
-    },
-    difficulty: 'Advanced',
-    popularity: 94,
-    downloads: 1823,
-    rating: 4.8,
-    tags: ['DeFi', 'DEX', 'AMM', 'Trading']
-  },
-  {
-    id: 'staking-pools',
-    name: 'Staking Pools Platform',
-    category: 'DeFi',
-    price: 279,
-    description: 'Multi-token staking platform with flexible reward distribution',
-    features: [
-      'Multi-token staking pools',
-      'Flexible reward periods',
-      'Auto-compounding rewards',
-      'Pool performance analytics',
-      'Emergency withdrawal protection'
-    ],
-    preview: {
-      image: '/templates/staking-pools-preview.png',
-      code: `// Staking Pools
-contract StakingPools {
-    struct Pool {
-        address stakingToken;
-        address rewardToken;
-        uint256 rewardRate;
-        uint256 lockPeriod;
-    }
-    
-    function stake(uint256 poolId, uint256 amount) external {
-        // Staking logic
-    }
-}`,
-      demo: 'https://demo.staking-pools.com'
-    },
-    difficulty: 'Intermediate',
-    popularity: 87,
-    downloads: 934,
-    rating: 4.7,
-    tags: ['DeFi', 'Staking', 'Rewards', 'Multi-token']
-  },
-  {
-    id: 'bridge-protocol',
-    name: 'Cross-Chain Bridge',
-    category: 'DeFi',
-    price: 449,
-    description: 'Secure cross-chain bridge protocol with multi-chain support',
-    features: [
-      'Multi-chain asset bridging',
-      'Liquidity provider rewards',
-      'Bridge fee optimization',
-      'Cross-chain message passing',
-      'Security monitoring dashboard'
-    ],
-    preview: {
-      image: '/templates/bridge-protocol-preview.png',
-      code: `// Cross-Chain Bridge
-contract CrossChainBridge {
-    struct BridgeRequest {
-        address token;
-        uint256 amount;
-        uint256 targetChain;
-        address recipient;
-    }
-    
-    function bridgeToken(address token, uint256 amount, uint256 targetChain) external {
-        // Bridge logic
-    }
-}`,
-      demo: 'https://demo.bridge-protocol.com'
-    },
-    difficulty: 'Advanced',
-    popularity: 79,
     downloads: 567,
     rating: 4.6,
-    tags: ['DeFi', 'Bridge', 'Cross-chain', 'Security']
+    tags: ['DAO', 'Treasury', 'Multi-sig', 'Budget']
   },
   {
-    id: 'prediction-market',
-    name: 'Prediction Market',
-    category: 'DeFi',
-    price: 329,
-    description: 'Decentralized prediction market platform with oracle integration',
+    id: 'dao-voting-portal',
+    name: 'DAO Voting Portal',
+    category: 'DAO',
+    price: 279,
+    description: 'Advanced voting portal with quadratic voting, delegation, and proposal tracking.',
     features: [
-      'Binary options trading',
-      'Real-world event markets',
-      'Oracle price feeds',
-      'Market creation tools',
-      'Liquidity mining rewards'
+      'Quadratic Voting',
+      'Delegation System',
+      'Proposal Tracking',
+      'Vote Analytics'
     ],
     preview: {
-      image: '/templates/prediction-market-preview.png',
-      code: `// Prediction Market
-contract PredictionMarket {
-    struct Market {
-        string question;
-        uint256 endTime;
-        bool resolved;
-        uint256 outcome;
-    }
-    
-    function placeBet(uint256 marketId, bool outcome, uint256 amount) external {
-        // Betting logic
-    }
+      image: '/templates/dao-voting-preview.png',
+      code: `// DAO Voting Contract
+export class DAOVoting {
+  static async castQuadraticVote(ctx: web3.Context, proposalId: string, voteWeight: number, direction: boolean) {
+    // Quadratic voting implementation
+  }
 }`,
-      demo: 'https://demo.prediction-market.com'
-    },
-    difficulty: 'Advanced',
-    popularity: 73,
-    downloads: 389,
-    rating: 4.5,
-    tags: ['DeFi', 'Prediction', 'Oracle', 'Betting']
-  },
-  {
-    id: 'social-token',
-    name: 'Social Token Platform',
-    category: 'Token',
-    price: 179,
-    description: 'Complete social token platform with creator economy features',
-    features: [
-      'Creator token issuance',
-      'Fan token staking',
-      'Content reward system',
-      'Creator governance',
-      'Social media integration'
-    ],
-    preview: {
-      image: '/templates/social-token-preview.png',
-      code: `// Social Token Platform
-contract SocialToken {
-    mapping(address => uint256) public creatorTokens;
-    mapping(address => uint256) public fanRewards;
-    
-    function mintCreatorToken(uint256 amount) external {
-        // Minting logic
-    }
-}`,
-      demo: 'https://demo.social-token.com'
+      demo: 'https://demo.dao-voting.com'
     },
     difficulty: 'Intermediate',
-    popularity: 85,
-    downloads: 712,
-    rating: 4.6,
-    tags: ['Token', 'Social', 'Creator', 'Economy']
+    popularity: 62,
+    downloads: 412,
+    rating: 4.5,
+    tags: ['DAO', 'Voting', 'Quadratic', 'Delegation']
   },
   {
-    id: 'lending-protocol',
-    name: 'Lending Protocol',
-    category: 'DeFi',
-    price: 389,
-    description: 'Complete lending and borrowing protocol with collateral management',
+    id: 'dao-reputation-system',
+    name: 'DAO Reputation System',
+    category: 'DAO',
+    price: 319,
+    description: 'Reputation-based governance with contribution tracking, levels, and reward distribution.',
     features: [
-      'Multi-asset lending pools',
-      'Dynamic interest rates',
-      'Collateral management',
-      'Liquidation protection',
-      'Risk assessment tools'
+      'Contribution Tracking',
+      'Reputation Levels',
+      'Reward Distribution',
+      'Governance Rights'
     ],
     preview: {
-      image: '/templates/lending-protocol-preview.png',
-      code: `// Lending Protocol
-contract LendingProtocol {
-    struct Loan {
-        address borrower;
-        address collateral;
-        uint256 amount;
-        uint256 interestRate;
-    }
-    
-    function borrow(address collateralToken, uint256 collateralAmount, uint256 borrowAmount) external {
-        // Borrowing logic
-    }
+      image: '/templates/dao-reputation-preview.png',
+      code: `// DAO Reputation Contract
+export class DAOReputation {
+  static async recordContribution(ctx: web3.Context, contributor: string, contributionType: string, impact: number) {
+    // Reputation tracking
+  }
 }`,
-      demo: 'https://demo.lending-protocol.com'
+      demo: 'https://demo.dao-reputation.com'
+    },
+    difficulty: 'Intermediate',
+    popularity: 56,
+    downloads: 345,
+    rating: 4.4,
+    tags: ['DAO', 'Reputation', 'Contributions', 'Rewards']
+  },
+  {
+    id: 'dao-community-fund',
+    name: 'DAO Community Fund',
+    category: 'DAO',
+    price: 299,
+    description: 'Community-driven fund management with grant proposals, voting, and milestone tracking.',
+    features: [
+      'Grant Proposals',
+      'Community Voting',
+      'Milestone Tracking',
+      'Fund Distribution'
+    ],
+    preview: {
+      image: '/templates/dao-community-fund-preview.png',
+      code: `// DAO Community Fund Contract
+export class CommunityFund {
+  static async submitGrantProposal(ctx: web3.Context, title: string, description: string, requestedAmount: number) {
+    // Grant proposal submission
+  }
+}`,
+      demo: 'https://demo.dao-community-fund.com'
+    },
+    difficulty: 'Intermediate',
+    popularity: 71,
+    downloads: 489,
+    rating: 4.6,
+    tags: ['DAO', 'Community', 'Grants', 'Funding']
+  },
+
+  // Gaming Templates (5 total)
+  {
+    id: 'gaming-p2e-arena',
+    name: 'P2E Battle Arena',
+    category: 'Gaming',
+    price: 429,
+    description: 'Play-to-earn battle arena with NFT characters, skill-based combat, and tournament system.',
+    features: [
+      'NFT Characters',
+      'Battle System',
+      'Tournaments',
+      'Play-to-Earn'
+    ],
+    preview: {
+      image: '/templates/gaming-p2e-arena-preview.png',
+      code: `// P2E Battle Contract
+export class BattleArena {
+  static async executeBattle(ctx: web3.Context, attacker: string, defender: string, battleType: string) {
+    // Battle execution with rewards
+  }
+}`,
+      demo: 'https://demo.gaming-p2e-arena.com'
     },
     difficulty: 'Advanced',
-    popularity: 90,
-    downloads: 1456,
+    popularity: 103,
+    downloads: 892,
+    rating: 4.7,
+    tags: ['Gaming', 'P2E', 'Battle', 'Tournaments']
+  },
+  {
+    id: 'gaming-virtual-world',
+    name: 'Virtual World Metaverse',
+    category: 'Gaming',
+    price: 549,
+    description: 'Decentralized virtual world with land ownership, avatar customization, and social features.',
+    features: [
+      'Virtual Land',
+      'Avatar System',
+      'Social Features',
+      'Economy'
+    ],
+    preview: {
+      image: '/templates/gaming-virtual-world-preview.png',
+      code: `// Virtual World Contract
+export class VirtualWorld {
+  static async purchaseLand(ctx: web3.Context, landId: number, coordinates: { x: number, y: number }) {
+    // Virtual land purchase
+  }
+}`,
+      demo: 'https://demo.gaming-virtual-world.com'
+    },
+    difficulty: 'Advanced',
+    popularity: 127,
+    downloads: 1234,
     rating: 4.8,
-    tags: ['DeFi', 'Lending', 'Borrowing', 'Collateral']
+    tags: ['Gaming', 'Metaverse', 'Virtual Land', 'Social']
+  },
+  {
+    id: 'gaming-fantasy-sports',
+    name: 'Fantasy Sports League',
+    category: 'Gaming',
+    price: 379,
+    description: 'Blockchain-based fantasy sports with real-world data integration, prize pools, and NFT rewards.',
+    features: [
+      'Fantasy Teams',
+      'Real Data',
+      'Prize Pools',
+      'NFT Rewards'
+    ],
+    preview: {
+      image: '/templates/gaming-fantasy-sports-preview.png',
+      code: `// Fantasy Sports Contract
+export class FantasySports {
+  static async createFantasyTeam(ctx: web3.Context, teamName: string, players: string[], leagueId: number) {
+    // Fantasy team creation
+  }
+}`,
+      demo: 'https://demo.gaming-fantasy-sports.com'
+    },
+    difficulty: 'Intermediate',
+    popularity: 89,
+    downloads: 678,
+    rating: 4.6,
+    tags: ['Gaming', 'Fantasy Sports', 'Real Data', 'NFT']
+  },
+  {
+    id: 'gaming-card-game',
+    name: 'Blockchain Card Game',
+    category: 'Gaming',
+    price: 329,
+    description: 'Collectible card game with NFT cards, deck building, ranked matches, and tournaments.',
+    features: [
+      'NFT Cards',
+      'Deck Building',
+      'Ranked Matches',
+      'Tournaments'
+    ],
+    preview: {
+      image: '/templates/gaming-card-game-preview.png',
+      code: `// Card Game Contract
+export class CardGame {
+  static async playCard(ctx: web3.Context, cardId: number, target: string, gameSession: string) {
+    // Card game mechanics
+  }
+}`,
+      demo: 'https://demo.gaming-card-game.com'
+    },
+    difficulty: 'Intermediate',
+    popularity: 76,
+    downloads: 534,
+    rating: 4.5,
+    tags: ['Gaming', 'Card Game', 'NFT', 'Tournaments']
+  },
+  {
+    id: 'gaming-racing-game',
+    name: 'Web3 Racing Game',
+    category: 'Gaming',
+    price: 389,
+    description: 'Racing game with NFT cars, track ownership, betting system, and championship tournaments.',
+    features: [
+      'NFT Cars',
+      'Track Ownership',
+      'Betting System',
+      'Championships'
+    ],
+    preview: {
+      image: '/templates/gaming-racing-game-preview.png',
+      code: `// Racing Game Contract
+export class RacingGame {
+  static async executeRace(ctx: web3.Context, participants: string[], trackId: number, betAmount: number) {
+    // Race execution with betting
+  }
+}`,
+      demo: 'https://demo.gaming-racing-game.com'
+    },
+    difficulty: 'Intermediate',
+    popularity: 68,
+    downloads: 445,
+    rating: 4.4,
+    tags: ['Gaming', 'Racing', 'NFT Cars', 'Betting']
+  },
+
+  // Token Templates (5 total)
+  {
+    id: 'token-launchpad-pro',
+    name: 'Token Launchpad Pro',
+    category: 'Token',
+    price: 499,
+    description: 'Professional token launch platform with presale, vesting, liquidity locks, and marketing tools.',
+    features: [
+      'Token Presale',
+      'Vesting System',
+      'Liquidity Locks',
+      'Marketing Tools'
+    ],
+    preview: {
+      image: '/templates/token-launchpad-pro-preview.png',
+      code: `// Token Launchpad Contract
+export class TokenLaunchpad {
+  static async createToken(ctx: web3.Context, tokenName: string, tokenSymbol: string, totalSupply: number) {
+    // Professional token creation
+  }
+}`,
+      demo: 'https://demo.token-launchpad-pro.com'
+    },
+    difficulty: 'Advanced',
+    popularity: 142,
+    downloads: 1123,
+    rating: 4.8,
+    tags: ['Token', 'Launchpad', 'Presale', 'Vesting']
+  },
+  {
+    id: 'token-staking-platform',
+    name: 'Token Staking Platform',
+    category: 'Token',
+    price: 359,
+    description: 'Flexible staking platform with multiple pools, reward mechanisms, and governance integration.',
+    features: [
+      'Multiple Pools',
+      'Reward Mechanisms',
+      'Governance Integration',
+      'APY Tracking'
+    ],
+    preview: {
+      image: '/templates/token-staking-platform-preview.png',
+      code: `// Token Staking Contract
+export class TokenStaking {
+  static async stakeTokens(ctx: web3.Context, amount: number, poolId: number, lockPeriod: number) {
+    // Flexible token staking
+  }
+}`,
+      demo: 'https://demo.token-staking-platform.com'
+    },
+    difficulty: 'Intermediate',
+    popularity: 94,
+    downloads: 734,
+    rating: 4.6,
+    tags: ['Token', 'Staking', 'Rewards', 'Governance']
+  },
+  {
+    id: 'token-governance-system',
+    name: 'Token Governance System',
+    category: 'Token',
+    price: 419,
+    description: 'Comprehensive governance system with voting power, proposal creation, and treasury management.',
+    features: [
+      'Voting Power',
+      'Proposal Creation',
+      'Treasury Management',
+      'Delegation'
+    ],
+    preview: {
+      image: '/templates/token-governance-preview.png',
+      code: `// Token Governance Contract
+export class TokenGovernance {
+  static async createProposal(ctx: web3.Context, title: string, description: string, votingPower: number) {
+    // Token-based governance
+  }
+}`,
+      demo: 'https://demo.token-governance.com'
+    },
+    difficulty: 'Advanced',
+    popularity: 108,
+    downloads: 867,
+    rating: 4.7,
+    tags: ['Token', 'Governance', 'Voting', 'Treasury']
+  },
+  {
+    id: 'token-bridge-protocol',
+    name: 'Token Bridge Protocol',
+    category: 'Token',
+    price: 529,
+    description: 'Cross-chain token bridge with wrapped assets, liquidity pools, and security features.',
+    features: [
+      'Cross-chain Bridge',
+      'Wrapped Assets',
+      'Liquidity Pools',
+      'Security Features'
+    ],
+    preview: {
+      image: '/templates/token-bridge-protocol-preview.png',
+      code: `// Token Bridge Contract
+export class TokenBridge {
+  static async bridgeToken(ctx: web3.Context, tokenAmount: number, targetChain: string, recipient: string) {
+    // Cross-chain token bridging
+  }
+}`,
+      demo: 'https://demo.token-bridge-protocol.com'
+    },
+    difficulty: 'Advanced',
+    popularity: 87,
+    downloads: 623,
+    rating: 4.8,
+    tags: ['Token', 'Bridge', 'Cross-chain', 'Security']
+  },
+  {
+    id: 'token-farming-protocol',
+    name: 'Token Farming Protocol',
+    category: 'Token',
+    price: 389,
+    description: 'Advanced farming protocol with yield optimization, auto-compounding, and reward multipliers.',
+    features: [
+      'Yield Optimization',
+      'Auto-compounding',
+      'Reward Multipliers',
+      'Pool Management'
+    ],
+    preview: {
+      image: '/templates/token-farming-protocol-preview.png',
+      code: `// Token Farming Contract
+export class TokenFarming {
+  static async farmTokens(ctx: web3.Context, tokenAmount: number, poolId: number, compoundFrequency: number) {
+    // Advanced token farming
+  }
+}`,
+      demo: 'https://demo.token-farming-protocol.com'
+    },
+    difficulty: 'Intermediate',
+    popularity: 73,
+    downloads: 512,
+    rating: 4.5,
+    tags: ['Token', 'Farming', 'Yield', 'Auto-compound']
   }
 ];
 

@@ -257,7 +257,7 @@ export default function DashboardPage() {
                 <Button 
                   variant="secondary" 
                   className="w-full bg-white text-green-600 hover:bg-gray-100"
-                  onClick={() => window.location.href = '/#pricing'}
+                  onClick={() => window.location.href = '/pricing'}
                 >
                   View Plans
                 </Button>
