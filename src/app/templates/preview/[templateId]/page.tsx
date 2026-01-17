@@ -1651,6 +1651,18 @@ export default function TemplatePreview() {
         
         setIsPurchasing(true);
         try {
+            // Validate template data
+            if (!templateId || !template.title || !template.price) {
+                throw new Error('Missing template information');
+            }
+
+            const price = parseInt(template.price.replace('$', ''));
+            if (isNaN(price) || price <= 0) {
+                throw new Error('Invalid template price');
+            }
+
+            console.log('Creating checkout session:', { templateId, templateName: template.title, price });
+
             // Create Stripe checkout session
             const response = await fetch('/api/stripe/create-checkout-session', {
                 method: 'POST',
@@ -1660,25 +1672,36 @@ export default function TemplatePreview() {
                 body: JSON.stringify({
                     templateId: templateId,
                     templateName: template.title,
-                    price: parseInt(template.price.replace('$', '')),
+                    price: price,
                 }),
             });
 
+            const responseText = await response.text();
+            console.log('Stripe API response:', response.status, responseText);
+
             if (!response.ok) {
-                throw new Error('Failed to create checkout session');
+                let errorMessage = 'Failed to create checkout session';
+                try {
+                    const errorData = JSON.parse(responseText);
+                    errorMessage = errorData.error || errorMessage;
+                } catch {
+                    errorMessage = `Server error: ${response.status} ${response.statusText}`;
+                }
+                throw new Error(errorMessage);
             }
 
-            const session = await response.json();
+            const session = JSON.parse(responseText);
             
             if (session.url) {
                 // Redirect to Stripe Checkout
                 window.location.href = session.url;
             } else {
-                throw new Error('No checkout URL returned');
+                throw new Error('No checkout URL returned from Stripe');
             }
         } catch (error) {
             console.error('Purchase failed:', error);
-            alert('Failed to initiate purchase. Please try again.');
+            const errorMessage = error instanceof Error ? error.message : 'Failed to initiate purchase. Please try again.';
+            alert(errorMessage);
         } finally {
             setIsPurchasing(false);
         }
