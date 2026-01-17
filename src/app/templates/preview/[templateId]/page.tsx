@@ -1,6 +1,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -603,8 +604,12 @@ export default function TemplatePreview() {
     const params = useParams();
     const templateId = params.templateId as string;
     const template = templateData[templateId];
+    const [isPurchasing, setIsPurchasing] = useState(false);
 
     const handlePurchase = async () => {
+        if (isPurchasing) return;
+        
+        setIsPurchasing(true);
         try {
             // Create Stripe checkout session
             const response = await fetch('/api/stripe/create-checkout-session', {
@@ -619,12 +624,23 @@ export default function TemplatePreview() {
                 }),
             });
 
+            if (!response.ok) {
+                throw new Error('Failed to create checkout session');
+            }
+
             const session = await response.json();
             
-            // Redirect to Stripe Checkout
-            window.location.href = session.url;
+            if (session.url) {
+                // Redirect to Stripe Checkout
+                window.location.href = session.url;
+            } else {
+                throw new Error('No checkout URL returned');
+            }
         } catch (error) {
             console.error('Purchase failed:', error);
+            alert('Failed to initiate purchase. Please try again.');
+        } finally {
+            setIsPurchasing(false);
         }
     };
 
@@ -776,9 +792,19 @@ export default function TemplatePreview() {
                                     size="lg" 
                                     className="bg-gradient-to-r from-purple-600 to-blue-600 hover:opacity-90"
                                     onClick={handlePurchase}
+                                    disabled={isPurchasing}
                                 >
-                                    <ShoppingCart className="w-4 h-4 mr-2" />
-                                    Buy Now - {template.price}
+                                    {isPurchasing ? (
+                                        <>
+                                            <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                            Processing...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <ShoppingCart className="w-4 h-4 mr-2" />
+                                            Buy Now - {template.price}
+                                        </>
+                                    )}
                                 </Button>
                             </div>
                         </CardContent>
