@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
         },
       ],
       mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/templates/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/templates/success?session_id={CHECKOUT_SESSION_ID}&templateId=${templateId}&templateName=${encodeURIComponent(templateName)}`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/templates`,
       metadata: {
         templateId,

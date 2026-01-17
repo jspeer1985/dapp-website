@@ -64,9 +64,9 @@ export default function TemplateSuccessPage() {
               <Button 
                 size="lg" 
                 className="w-full py-3"
-                onClick={() => window.location.href = `/dashboard/templates`}
+                onClick={() => window.location.href = `/templates`}
               >
-                View in Dashboard
+                Back to Templates
               </Button>
               <Button 
                 variant="outline" 

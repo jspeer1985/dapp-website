@@ -1,3 +1,7 @@
 {
-  "/api/stripe/test-config/route": "app/api/stripe/test-config/route.js"
+  "/templates/page": "app/templates/page.js",
+  "/templates/preview/[templateId]/page": "app/templates/preview/[templateId]/page.js",
+  "/page": "app/page.js",
+  "/pricing/page": "app/pricing/page.js",
+  "/docs/page": "app/docs/page.js"
 }
