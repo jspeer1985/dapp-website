@@ -82,3 +82,4 @@ storybook-static
 
 # Stripe test data
 stripe-test-data.json
+node_modules/
