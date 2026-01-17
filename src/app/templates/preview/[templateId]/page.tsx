@@ -597,6 +597,1046 @@ export default function GameDashboard() {
   );
 }`
         }
+    },
+
+    // Additional DeFi Templates (5 more)
+    'defi-liquidity-mining': {
+        title: 'Liquidity Mining Platform',
+        description: 'Advanced liquidity mining with dynamic rewards, pool creation, and yield optimization.',
+        category: 'DeFi',
+        price: '$329',
+        rating: 4.7,
+        reviews: 84,
+        audited: true,
+        features: ['Dynamic Rewards', 'Pool Creation', 'Yield Optimization', 'Liquidity Analytics'],
+        image: '⛏️',
+        technicalSpecs: {
+            blockchain: 'Solana',
+            language: 'TypeScript, React',
+            framework: 'Next.js, Anchor',
+            smartContracts: ['Mining Contract', 'Reward Calculator', 'Pool Manager'],
+            frontend: ['Mining Dashboard', 'Pool Creator', 'Analytics Charts'],
+            features: ['Liquidity Mining', 'Dynamic Rewards', 'Pool Management', 'Yield Tracking']
+        },
+        codePreview: {
+            'Smart Contract': `// Liquidity Mining Contract
+import { Program, web3 } from '@project-serum/anchor';
+
+export class LiquidityMining {
+  static async calculateRewards(
+    ctx: web3.Context,
+    liquidityAmount: number,
+    poolDuration: number
+  ) {
+    const baseReward = liquidityAmount * 0.05;
+    const timeBonus = poolDuration * 0.02;
+    return baseReward + timeBonus;
+  }
+}`,
+            'Frontend Component': `// Mining Dashboard
+import { useConnection } from '@solana/wallet-adapter-react';
+
+export default function LiquidityMining() {
+  const { connection } = useConnection();
+  
+  const handleCreatePool = async (params) => {
+    const pool = await createMiningPool(params);
+    // Pool creation logic
+  };
+}`
+        }
+    },
+
+    'defi-yield-aggregator': {
+        title: 'Yield Aggregator',
+        description: 'Multi-protocol yield aggregator that automatically finds and allocates to best yields.',
+        category: 'DeFi',
+        price: '$419',
+        rating: 4.8,
+        reviews: 92,
+        audited: true,
+        features: ['Auto-compounding', 'Multi-protocol', 'Risk Assessment', 'Portfolio Management'],
+        image: '📊',
+        technicalSpecs: {
+            blockchain: 'Solana',
+            language: 'TypeScript, React',
+            framework: 'Next.js, Anchor',
+            smartContracts: ['Aggregator Contract', 'Protocol Manager', 'Risk Calculator'],
+            frontend: ['Aggregator Dashboard', 'Protocol Selector', 'Risk Analysis'],
+            features: ['Yield Aggregation', 'Protocol Switching', 'Risk Management', 'Auto-rebalancing']
+        },
+        codePreview: {
+            'Smart Contract': `// Yield Aggregator Contract
+export class YieldAggregator {
+  static async findBestYield(
+    ctx: web3.Context,
+    tokenAmount: number,
+    riskLevel: string
+  ) {
+    const protocols = await this.getAvailableProtocols();
+    const bestYield = this.compareYields(protocols, tokenAmount, riskLevel);
+    
+    return bestYield;
+  }
+}`,
+            'Frontend Component': `// Aggregator Interface
+export default function YieldAggregator() {
+  const [protocols, setProtocols] = useState([]);
+  
+  const handleOptimize = async (amount, risk) => {
+    const bestYield = await findOptimalYield(amount, risk);
+    // Auto-allocate to best yield
+  };
+}`
+        }
+    },
+
+    'defi-options-protocol': {
+        title: 'DeFi Options Protocol',
+        description: 'Decentralized options trading with European/American options, Greeks calculator, and liquidity pools.',
+        category: 'DeFi',
+        price: '$529',
+        rating: 4.6,
+        reviews: 67,
+        audited: true,
+        features: ['Options Trading', 'Greeks Calculator', 'Liquidity Pools', 'Risk Management'],
+        image: '📈',
+        technicalSpecs: {
+            blockchain: 'Solana',
+            language: 'TypeScript, React',
+            framework: 'Next.js, Anchor',
+            smartContracts: ['Options Contract', 'Greeks Calculator', 'Settlement Engine'],
+            frontend: ['Options Dashboard', 'Trading Interface', 'Risk Analytics'],
+            features: ['Options Trading', 'Premium Calculation', 'Settlement System', 'Liquidity Management']
+        },
+        codePreview: {
+            'Smart Contract': `// Options Trading Contract
+export class OptionsProtocol {
+  static async calculatePremium(
+    ctx: web3.Context,
+    strikePrice: number,
+    currentPrice: number,
+    timeToExpiry: number,
+    volatility: number
+  ) {
+    // Black-Scholes calculation
+    const d1 = this.calculateD1(currentPrice, strikePrice, timeToExpiry, volatility);
+    const premium = this.blackScholes(d1, timeToExpiry);
+    
+    return premium;
+  }
+}`,
+            'Frontend Component': `// Options Trading Interface
+export default function OptionsTrading() {
+  const handleCreateOption = async (params) => {
+    const premium = calculateOptionPremium(params);
+    // Create option contract
+  };
+
+  return (
+    <div className="options-trading">
+      {/* Options trading UI */}
+    </div>
+  );
+}`
+        }
+    },
+
+    'defi-synthetic-assets': {
+        title: 'Synthetic Assets Platform',
+        description: 'Create and trade synthetic assets with price feeds, collateralization, and minting/burning.',
+        category: 'DeFi',
+        price: '$459',
+        rating: 4.5,
+        reviews: 58,
+        audited: true,
+        features: ['Synthetic Assets', 'Price Feeds', 'Collateralization', 'Mint/Burn'],
+        image: '🎯',
+        technicalSpecs: {
+            blockchain: 'Solana',
+            language: 'TypeScript, React',
+            framework: 'Next.js, Anchor',
+            smartContracts: ['Synthetic Contract', 'Oracle Feed', 'Collateral Manager'],
+            frontend: ['Assets Dashboard', 'Minting Interface', 'Collateral Manager'],
+            features: ['Asset Creation', 'Price Tracking', 'Collateral Management', 'Trading']
+        },
+        codePreview: {
+            'Smart Contract': `// Synthetic Assets Contract
+export class SyntheticAssets {
+  static async mintSynthetic(
+    ctx: web3.Context,
+    collateralAmount: number,
+    targetPrice: number,
+    assetSymbol: string
+  ) {
+    const requiredCollateral = collateralAmount * 1.5; // 150% collateralization
+    const syntheticAmount = collateralAmount / targetPrice;
+    
+    await this.mintToken(ctx.accounts.syntheticMint, syntheticAmount);
+  }
+}`,
+            'Frontend Component': `// Synthetic Assets Interface
+export default function SyntheticAssets() {
+  const handleMintSynthetic = async (collateral, targetPrice) => {
+    const syntheticAmount = await calculateSyntheticAmount(collateral, targetPrice);
+    // Mint synthetic asset
+  };
+
+  return (
+    <div className="synthetic-assets">
+      {/* Synthetic assets UI */}
+    </div>
+  );
+}`
+        }
+    },
+
+    'defi-flash-loans': {
+        title: 'Flash Loans Protocol',
+        description: 'Arbitrage flash loans with instant execution, collateral-free borrowing, and fee optimization.',
+        category: 'DeFi',
+        price: '$379',
+        rating: 4.7,
+        reviews: 73,
+        audited: true,
+        features: ['Flash Loans', 'Arbitrage', 'Instant Execution', 'Fee Optimization'],
+        image: '⚡',
+        technicalSpecs: {
+            blockchain: 'Solana',
+            language: 'TypeScript, React',
+            framework: 'Next.js, Anchor',
+            smartContracts: ['Flash Loan Contract', 'Arbitrage Engine', 'Fee Calculator'],
+            frontend: ['Loans Dashboard', 'Arbitrage Interface', 'Fee Analytics'],
+            features: ['Flash Lending', 'Arbitrage Execution', 'Instant Settlement', 'Fee Management']
+        },
+        codePreview: {
+            'Smart Contract': `// Flash Loans Contract
+export class FlashLoans {
+  static async executeFlashLoan(
+    ctx: web3.Context,
+    loanAmount: number,
+    arbitrageOpportunity: any
+  ) {
+    // Execute arbitrage in single transaction
+    const profit = await this.performArbitrage(loanAmount, arbitrageOpportunity);
+    const fee = loanAmount * 0.0009; // 0.09% fee
+    
+    // Repay loan + fee
+    await this.repayLoan(ctx.accounts.loanPool, loanAmount + fee);
+    
+    return profit - fee;
+  }
+}`,
+            'Frontend Component': `// Flash Loans Interface
+export default function FlashLoans() {
+  const handleExecuteFlashLoan = async (amount, opportunity) => {
+    const profit = await executeArbitrage(amount, opportunity);
+    // Flash loan execution
+  };
+
+  return (
+    <div className="flash-loans">
+      {/* Flash loans UI */}
+    </div>
+  );
+}`
+        }
+    },
+
+    // DAO Templates (5 total)
+    'dao-governance-suite': {
+        title: 'DAO Governance Suite',
+        description: 'Comprehensive DAO governance with voting, treasury management, proposal system, and delegation.',
+        category: 'DAO',
+        price: '$399',
+        rating: 4.8,
+        reviews: 94,
+        audited: true,
+        features: ['On-chain Voting', 'Treasury Management', 'Proposal System', 'Delegation'],
+        image: '🏛️',
+        technicalSpecs: {
+            blockchain: 'Solana',
+            language: 'TypeScript, React',
+            framework: 'Next.js, Anchor',
+            smartContracts: ['Governance Contract', 'Treasury Contract', 'Proposal Contract'],
+            frontend: ['Governance Dashboard', 'Proposal Interface', 'Treasury Manager'],
+            features: ['Voting System', 'Treasury Management', 'Proposal Creation', 'Token Delegation']
+        },
+        codePreview: {
+            'Smart Contract': `// DAO Governance Contract
+export class DAOGovernance {
+  static async createProposal(
+    ctx: web3.Context,
+    title: string,
+    description: string,
+    votingPeriod: number
+  ) {
+    const proposalId = await this.generateProposalId();
+    
+    await this.initializeProposal(ctx.accounts.proposal, {
+      id: proposalId,
+      title,
+      description,
+      votingPeriod,
+      createdAt: Date.now()
+    });
+  }
+}`,
+            'Frontend Component': `// DAO Governance Interface
+export default function DAOGovernance() {
+  const handleCreateProposal = async (proposalData) => {
+    const proposal = await createDAOProposal(proposalData);
+    // Proposal creation logic
+  };
+
+  return (
+    <div className="dao-governance">
+      {/* Governance UI */}
+    </div>
+  );
+}`
+        }
+    },
+
+    'dao-treasury-manager': {
+        title: 'DAO Treasury Manager',
+        description: 'Advanced treasury management with multi-sig, budget allocation, and financial reporting.',
+        category: 'DAO',
+        price: '$349',
+        rating: 4.6,
+        reviews: 78,
+        audited: true,
+        features: ['Multi-sig Wallet', 'Budget Allocation', 'Financial Reporting', 'Fund Management'],
+        image: '💰',
+        technicalSpecs: {
+            blockchain: 'Solana',
+            language: 'TypeScript, React',
+            framework: 'Next.js, Anchor',
+            smartContracts: ['Treasury Contract', 'Multi-sig Contract', 'Budget Contract'],
+            frontend: ['Treasury Dashboard', 'Budget Manager', 'Financial Reports'],
+            features: ['Multi-signature', 'Budget Planning', 'Fund Allocation', 'Reporting System']
+        },
+        codePreview: {
+            'Smart Contract': `// DAO Treasury Contract
+export class DAOTreasury {
+  static async allocateFunds(
+    ctx: web3.Context,
+    amount: number,
+    recipient: string,
+    purpose: string,
+    requiredSignatures: number
+  ) {
+    await this.createAllocation(ctx.accounts.allocation, {
+      amount,
+      recipient,
+      purpose,
+      requiredSignatures,
+      createdAt: Date.now()
+    });
+  }
+}`,
+            'Frontend Component': `// Treasury Management Interface
+export default function DAOTreasury() {
+  const handleAllocateFunds = async (allocationData) => {
+    const allocation = await createFundAllocation(allocationData);
+    // Fund allocation logic
+  };
+
+  return (
+    <div className="dao-treasury">
+      {/* Treasury management UI */}
+    </div>
+  );
+}`
+        }
+    },
+
+    'dao-voting-portal': {
+        title: 'DAO Voting Portal',
+        description: 'Advanced voting portal with quadratic voting, delegation, and proposal tracking.',
+        category: 'DAO',
+        price: '$279',
+        rating: 4.5,
+        reviews: 62,
+        audited: true,
+        features: ['Quadratic Voting', 'Delegation System', 'Proposal Tracking', 'Vote Analytics'],
+        image: '🗳️',
+        technicalSpecs: {
+            blockchain: 'Solana',
+            language: 'TypeScript, React',
+            framework: 'Next.js, Anchor',
+            smartContracts: ['Voting Contract', 'Delegation Contract', 'Analytics Contract'],
+            frontend: ['Voting Portal', 'Delegation Interface', 'Analytics Dashboard'],
+            features: ['Quadratic Voting', 'Vote Delegation', 'Proposal Tracking', 'Analytics']
+        },
+        codePreview: {
+            'Smart Contract': `// DAO Voting Contract
+export class DAOVoting {
+  static async castQuadraticVote(
+    ctx: web3.Context,
+    proposalId: string,
+    voteWeight: number,
+    voteDirection: boolean
+  ) {
+    const quadraticWeight = Math.sqrt(voteWeight);
+    
+    await this.recordVote(ctx.accounts.voting, {
+      proposalId,
+      voter: ctx.accounts.user.publicKey,
+      weight: quadraticWeight,
+      direction: voteDirection,
+      timestamp: Date.now()
+    });
+  }
+}`,
+            'Frontend Component': `// Voting Portal Interface
+export default function DAOVoting() {
+  const handleCastVote = async (proposalId, voteWeight, direction) => {
+    const quadraticWeight = Math.sqrt(voteWeight);
+    // Cast quadratic vote
+  };
+
+  return (
+    <div className="dao-voting">
+      {/* Voting portal UI */}
+    </div>
+  );
+}`
+        }
+    },
+
+    'dao-reputation-system': {
+        title: 'DAO Reputation System',
+        description: 'Reputation-based governance with contribution tracking, levels, and reward distribution.',
+        category: 'DAO',
+        price: '$319',
+        rating: 4.4,
+        reviews: 56,
+        audited: true,
+        features: ['Contribution Tracking', 'Reputation Levels', 'Reward Distribution', 'Governance Rights'],
+        image: '⭐',
+        technicalSpecs: {
+            blockchain: 'Solana',
+            language: 'TypeScript, React',
+            framework: 'Next.js, Anchor',
+            smartContracts: ['Reputation Contract', 'Contribution Contract', 'Reward Contract'],
+            frontend: ['Reputation Dashboard', 'Contribution Tracker', 'Reward Manager'],
+            features: ['Reputation Scoring', 'Contribution Tracking', 'Level System', 'Reward Distribution']
+        },
+        codePreview: {
+            'Smart Contract': `// DAO Reputation Contract
+export class DAOReputation {
+  static async recordContribution(
+    ctx: web3.Context,
+    contributor: string,
+    contributionType: string,
+    impact: number
+  ) {
+    const reputationPoints = this.calculateReputation(contributionType, impact);
+    
+    await this.updateReputation(ctx.accounts.reputation, {
+      contributor,
+      contributionType,
+      impact,
+      points: reputationPoints,
+      timestamp: Date.now()
+    });
+  }
+}`,
+            'Frontend Component': `// Reputation System Interface
+export default function DAOReputation() {
+  const handleRecordContribution = async (contributionData) => {
+    const reputation = await calculateReputation(contributionData);
+    // Record contribution
+  };
+
+  return (
+    <div className="dao-reputation">
+      {/* Reputation system UI */}
+    </div>
+  );
+}`
+        }
+    },
+
+    'dao-community-fund': {
+        title: 'DAO Community Fund',
+        description: 'Community-driven fund management with grant proposals, voting, and milestone tracking.',
+        category: 'DAO',
+        price: '$299',
+        rating: 4.6,
+        reviews: 71,
+        audited: true,
+        features: ['Grant Proposals', 'Community Voting', 'Milestone Tracking', 'Fund Distribution'],
+        image: '🤝',
+        technicalSpecs: {
+            blockchain: 'Solana',
+            language: 'TypeScript, React',
+            framework: 'Next.js, Anchor',
+            smartContracts: ['Fund Contract', 'Grant Contract', 'Milestone Contract'],
+            frontend: ['Fund Dashboard', 'Grant Portal', 'Milestone Tracker'],
+            features: ['Grant Management', 'Community Voting', 'Milestone Tracking', 'Fund Distribution']
+        },
+        codePreview: {
+            'Smart Contract': `// DAO Community Fund Contract
+export class CommunityFund {
+  static async submitGrantProposal(
+    ctx: web3.Context,
+    title: string,
+    description: string,
+    requestedAmount: number,
+    milestones: any[]
+  ) {
+    await this.createGrantProposal(ctx.accounts.proposal, {
+      title,
+      description,
+      requestedAmount,
+      milestones,
+      proposer: ctx.accounts.user.publicKey,
+      createdAt: Date.now()
+    });
+  }
+}`,
+            'Frontend Component': `// Community Fund Interface
+export default function CommunityFund() {
+  const handleSubmitGrant = async (grantData) => {
+    const proposal = await createGrantProposal(grantData);
+    // Grant proposal submission
+  };
+
+  return (
+    <div className="community-fund">
+      {/* Community fund UI */}
+    </div>
+  );
+}`
+        }
+    },
+
+    // Gaming Templates (5 total)
+    'gaming-p2e-arena': {
+        title: 'P2E Battle Arena',
+        description: 'Play-to-earn battle arena with NFT characters, skill-based combat, and tournament system.',
+        category: 'Gaming',
+        price: '$429',
+        rating: 4.7,
+        reviews: 103,
+        audited: true,
+        features: ['NFT Characters', 'Battle System', 'Tournaments', 'Play-to-Earn'],
+        image: '⚔️',
+        technicalSpecs: {
+            blockchain: 'Solana',
+            language: 'TypeScript, React',
+            framework: 'Next.js, Anchor',
+            smartContracts: ['Battle Contract', 'Character Contract', 'Tournament Contract'],
+            frontend: ['Battle Arena', 'Character Manager', 'Tournament Hub'],
+            features: ['Character Battles', 'Tournament System', 'Reward Distribution', 'NFT Integration']
+        },
+        codePreview: {
+            'Smart Contract': `// P2E Battle Contract
+export class BattleArena {
+  static async executeBattle(
+    ctx: web3.Context,
+    attacker: string,
+    defender: string,
+    battleType: string
+  ) {
+    const attackerStats = await this.getCharacterStats(attacker);
+    const defenderStats = await this.getCharacterStats(defender);
+    
+    const result = this.calculateBattleOutcome(attackerStats, defenderStats);
+    const rewards = this.calculateRewards(result, battleType);
+    
+    await this.distributeRewards(ctx.accounts.rewards, rewards);
+  }
+}`,
+            'Frontend Component': `// Battle Arena Interface
+export default function BattleArena() {
+  const handleStartBattle = async (attacker, defender, battleType) => {
+    const result = await executeBattle(attacker, defender, battleType);
+    // Battle execution logic
+  };
+
+  return (
+    <div className="battle-arena">
+      {/* Battle arena UI */}
+    </div>
+  );
+}`
+        }
+    },
+
+    'gaming-virtual-world': {
+        title: 'Virtual World Metaverse',
+        description: 'Decentralized virtual world with land ownership, avatar customization, and social features.',
+        category: 'Gaming',
+        price: '$549',
+        rating: 4.8,
+        reviews: 127,
+        audited: true,
+        features: ['Virtual Land', 'Avatar System', 'Social Features', 'Economy'],
+        image: '🌍',
+        technicalSpecs: {
+            blockchain: 'Solana',
+            language: 'TypeScript, React',
+            framework: 'Next.js, Anchor',
+            smartContracts: ['Land Contract', 'Avatar Contract', 'Economy Contract'],
+            frontend: ['World Explorer', 'Avatar Customizer', 'Social Hub'],
+            features: ['Land Ownership', 'Avatar Customization', 'Social Interaction', 'Virtual Economy']
+        },
+        codePreview: {
+            'Smart Contract': `// Virtual World Contract
+export class VirtualWorld {
+  static async purchaseLand(
+    ctx: web3.Context,
+    landId: number,
+    coordinates: { x: number, y: number },
+    price: number
+  ) {
+    await this.transferLandOwnership(ctx.accounts.landRegistry, {
+      landId,
+      coordinates,
+      newOwner: ctx.accounts.user.publicKey,
+      price,
+      timestamp: Date.now()
+    });
+  }
+}`,
+            'Frontend Component': `// Virtual World Interface
+export default function VirtualWorld() {
+  const handlePurchaseLand = async (landId, coordinates, price) => {
+    const land = await purchaseVirtualLand(landId, coordinates, price);
+    // Land purchase logic
+  };
+
+  return (
+    <div className="virtual-world">
+      {/* Virtual world UI */}
+    </div>
+  );
+}`
+        }
+    },
+
+    'gaming-fantasy-sports': {
+        title: 'Fantasy Sports League',
+        description: 'Blockchain-based fantasy sports with real-world data integration, prize pools, and NFT rewards.',
+        category: 'Gaming',
+        price: '$379',
+        rating: 4.6,
+        reviews: 89,
+        audited: true,
+        features: ['Fantasy Teams', 'Real Data', 'Prize Pools', 'NFT Rewards'],
+        image: '🏈',
+        technicalSpecs: {
+            blockchain: 'Solana',
+            language: 'TypeScript, React',
+            framework: 'Next.js, Anchor',
+            smartContracts: ['League Contract', 'Team Contract', 'Prize Contract'],
+            frontend: ['Team Builder', 'League Dashboard', 'Prize Manager'],
+            features: ['Team Management', 'Real-time Data', 'Prize Distribution', 'NFT Rewards']
+        },
+        codePreview: {
+            'Smart Contract': `// Fantasy Sports Contract
+export class FantasySports {
+  static async createFantasyTeam(
+    ctx: web3.Context,
+    teamName: string,
+    players: string[],
+    leagueId: number
+  ) {
+    await this.registerTeam(ctx.accounts.teamRegistry, {
+      teamName,
+      players,
+      leagueId,
+      owner: ctx.accounts.user.publicKey,
+      createdAt: Date.now()
+    });
+  }
+}`,
+            'Frontend Component': `// Fantasy Sports Interface
+export default function FantasySports() {
+  const handleCreateTeam = async (teamName, players, leagueId) => {
+    const team = await createFantasyTeam(teamName, players, leagueId);
+    // Team creation logic
+  };
+
+  return (
+    <div className="fantasy-sports">
+      {/* Fantasy sports UI */}
+    </div>
+  );
+}`
+        }
+    },
+
+    'gaming-card-game': {
+        title: 'Blockchain Card Game',
+        description: 'Collectible card game with NFT cards, deck building, ranked matches, and tournaments.',
+        category: 'Gaming',
+        price: '$329',
+        rating: 4.5,
+        reviews: 76,
+        audited: true,
+        features: ['NFT Cards', 'Deck Building', 'Ranked Matches', 'Tournaments'],
+        image: '🃏',
+        technicalSpecs: {
+            blockchain: 'Solana',
+            language: 'TypeScript, React',
+            framework: 'Next.js, Anchor',
+            smartContracts: ['Card Contract', 'Deck Contract', 'Match Contract'],
+            frontend: ['Card Collection', 'Deck Builder', 'Match Arena'],
+            features: ['Card Collection', 'Deck Management', 'Match System', 'Tournament Play']
+        },
+        codePreview: {
+            'Smart Contract': `// Card Game Contract
+export class CardGame {
+  static async playCard(
+    ctx: web3.Context,
+    cardId: number,
+    target: string,
+    gameSession: string
+  ) {
+    const cardStats = await this.getCardStats(cardId);
+    const targetStats = await this.getTargetStats(target);
+    
+    const result = this.calculateCardEffect(cardStats, targetStats);
+    
+    await this.updateGameState(ctx.accounts.gameState, result);
+  }
+}`,
+            'Frontend Component': `// Card Game Interface
+export default function CardGame() {
+  const handlePlayCard = async (cardId, target, gameSession) => {
+    const result = await executeCardPlay(cardId, target, gameSession);
+    // Card play logic
+  };
+
+  return (
+    <div className="card-game">
+      {/* Card game UI */}
+    </div>
+  );
+}`
+        }
+    },
+
+    'gaming-racing-game': {
+        title: 'Web3 Racing Game',
+        description: 'Racing game with NFT cars, track ownership, betting system, and championship tournaments.',
+        category: 'Gaming',
+        price: '$389',
+        rating: 4.4,
+        reviews: 68,
+        audited: true,
+        features: ['NFT Cars', 'Track Ownership', 'Betting System', 'Championships'],
+        image: '🏎️',
+        technicalSpecs: {
+            blockchain: 'Solana',
+            language: 'TypeScript, React',
+            framework: 'Next.js, Anchor',
+            smartContracts: ['Car Contract', 'Track Contract', 'Race Contract'],
+            frontend: ['Racing Interface', 'Car Garage', 'Betting Platform'],
+            features: ['Car Customization', 'Track Management', 'Race Betting', 'Championship System']
+        },
+        codePreview: {
+            'Smart Contract': `// Racing Game Contract
+export class RacingGame {
+  static async executeRace(
+    ctx: web3.Context,
+    participants: string[],
+    trackId: number,
+    betAmount: number
+  ) {
+    const raceResults = await this.simulateRace(participants, trackId);
+    const winners = this.determineWinners(raceResults);
+    
+    await this.distributePrizes(ctx.accounts.prizePool, winners, betAmount);
+  }
+}`,
+            'Frontend Component': `// Racing Game Interface
+export default function RacingGame() {
+  const handleStartRace = async (participants, trackId, betAmount) => {
+    const results = await executeRace(participants, trackId, betAmount);
+    // Race execution logic
+  };
+
+  return (
+    <div className="racing-game">
+      {/* Racing game UI */}
+    </div>
+  );
+}`
+        }
+    },
+
+    // Token Templates (5 total)
+    'token-launchpad-pro': {
+        title: 'Token Launchpad Pro',
+        description: 'Professional token launch platform with presale, vesting, liquidity locks, and marketing tools.',
+        category: 'Token',
+        price: '$499',
+        rating: 4.8,
+        reviews: 142,
+        audited: true,
+        features: ['Token Presale', 'Vesting System', 'Liquidity Locks', 'Marketing Tools'],
+        image: '🚀',
+        technicalSpecs: {
+            blockchain: 'Solana',
+            language: 'TypeScript, React',
+            framework: 'Next.js, Anchor',
+            smartContracts: ['Token Contract', 'Presale Contract', 'Vesting Contract'],
+            frontend: ['Launch Dashboard', 'Presale Interface', 'Token Manager'],
+            features: ['Token Creation', 'Presale Management', 'Vesting Schedule', 'Liquidity Management']
+        },
+        codePreview: {
+            'Smart Contract': `// Token Launchpad Contract
+export class TokenLaunchpad {
+  static async createToken(
+    ctx: web3.Context,
+    tokenName: string,
+    tokenSymbol: string,
+    totalSupply: number,
+    decimals: number
+  ) {
+    await this.initializeToken(ctx.accounts.tokenMint, {
+      name: tokenName,
+      symbol: tokenSymbol,
+      supply: totalSupply,
+      decimals,
+      mintAuthority: ctx.accounts.user.publicKey
+    });
+  }
+}`,
+            'Frontend Component': `// Token Launchpad Interface
+export default function TokenLaunchpad() {
+  const handleCreateToken = async (tokenData) => {
+    const token = await createToken(tokenData);
+    // Token creation logic
+  };
+
+  return (
+    <div className="token-launchpad">
+      {/* Token launchpad UI */}
+    </div>
+  );
+}`
+        }
+    },
+
+    'token-staking-platform': {
+        title: 'Token Staking Platform',
+        description: 'Flexible staking platform with multiple pools, reward mechanisms, and governance integration.',
+        category: 'Token',
+        price: '$359',
+        rating: 4.6,
+        reviews: 94,
+        audited: true,
+        features: ['Multiple Pools', 'Reward Mechanisms', 'Governance Integration', 'APY Tracking'],
+        image: '🎯',
+        technicalSpecs: {
+            blockchain: 'Solana',
+            language: 'TypeScript, React',
+            framework: 'Next.js, Anchor',
+            smartContracts: ['Staking Contract', 'Reward Contract', 'Pool Contract'],
+            frontend: ['Staking Dashboard', 'Pool Manager', 'Reward Tracker'],
+            features: ['Token Staking', 'Pool Management', 'Reward Distribution', 'Governance Voting']
+        },
+        codePreview: {
+            'Smart Contract': `// Token Staking Contract
+export class TokenStaking {
+  static async stakeTokens(
+    ctx: web3.Context,
+    amount: number,
+    poolId: number,
+    lockPeriod: number
+  ) {
+    const rewardRate = await this.getPoolRewardRate(poolId);
+    const lockBonus = this.calculateLockBonus(lockPeriod);
+    
+    await this.createStake(ctx.accounts.stake, {
+      amount,
+      poolId,
+      lockPeriod,
+      rewardRate: rewardRate * lockBonus,
+      timestamp: Date.now()
+    });
+  }
+}`,
+            'Frontend Component': `// Token Staking Interface
+export default function TokenStaking() {
+  const handleStake = async (amount, poolId, lockPeriod) => {
+    const stake = await createTokenStake(amount, poolId, lockPeriod);
+    // Token staking logic
+  };
+
+  return (
+    <div className="token-staking">
+      {/* Token staking UI */}
+    </div>
+  );
+}`
+        }
+    },
+
+    'token-governance-system': {
+        title: 'Token Governance System',
+        description: 'Comprehensive governance system with voting power, proposal creation, and treasury management.',
+        category: 'Token',
+        price: '$419',
+        rating: 4.7,
+        reviews: 108,
+        audited: true,
+        features: ['Voting Power', 'Proposal Creation', 'Treasury Management', 'Delegation'],
+        image: '🗳️',
+        technicalSpecs: {
+            blockchain: 'Solana',
+            language: 'TypeScript, React',
+            framework: 'Next.js, Anchor',
+            smartContracts: ['Governance Contract', 'Treasury Contract', 'Voting Contract'],
+            frontend: ['Governance Dashboard', 'Proposal Portal', 'Treasury Manager'],
+            features: ['Token Voting', 'Proposal System', 'Treasury Control', 'Power Delegation']
+        },
+        codePreview: {
+            'Smart Contract': `// Token Governance Contract
+export class TokenGovernance {
+  static async createProposal(
+    ctx: web3.Context,
+    title: string,
+    description: string,
+    votingPower: number,
+    executionDelay: number
+  ) {
+    await this.initializeProposal(ctx.accounts.proposal, {
+      title,
+      description,
+      requiredPower: votingPower,
+      executionDelay,
+      proposer: ctx.accounts.user.publicKey,
+      createdAt: Date.now()
+    });
+  }
+}`,
+            'Frontend Component': `// Token Governance Interface
+export default function TokenGovernance() {
+  const handleCreateProposal = async (proposalData) => {
+    const proposal = await createGovernanceProposal(proposalData);
+    // Proposal creation logic
+  };
+
+  return (
+    <div className="token-governance">
+      {/* Token governance UI */}
+    </div>
+  );
+}`
+        }
+    },
+
+    'token-bridge-protocol': {
+        title: 'Token Bridge Protocol',
+        description: 'Cross-chain token bridge with wrapped assets, liquidity pools, and security features.',
+        category: 'Token',
+        price: '$529',
+        rating: 4.8,
+        reviews: 87,
+        audited: true,
+        features: ['Cross-chain Bridge', 'Wrapped Assets', 'Liquidity Pools', 'Security Features'],
+        image: '🌉',
+        technicalSpecs: {
+            blockchain: 'Solana',
+            language: 'TypeScript, React',
+            framework: 'Next.js, Anchor',
+            smartContracts: ['Bridge Contract', 'Wrapper Contract', 'Security Contract'],
+            frontend: ['Bridge Interface', 'Asset Manager', 'Security Dashboard'],
+            features: ['Token Bridging', 'Asset Wrapping', 'Liquidity Management', 'Security Validation']
+        },
+        codePreview: {
+            'Smart Contract': `// Token Bridge Contract
+export class TokenBridge {
+  static async bridgeToken(
+    ctx: web3.Context,
+    tokenAmount: number,
+    targetChain: string,
+    recipient: string
+  ) {
+    const bridgeFee = tokenAmount * 0.001; // 0.1% bridge fee
+    const wrappedAmount = tokenAmount - bridgeFee;
+    
+    await this.lockToken(ctx.accounts.vault, tokenAmount);
+    await this.mintWrappedToken(targetChain, recipient, wrappedAmount);
+  }
+}`,
+            'Frontend Component': `// Token Bridge Interface
+export default function TokenBridge() {
+  const handleBridgeToken = async (amount, targetChain, recipient) => {
+    const bridge = await executeTokenBridge(amount, targetChain, recipient);
+    // Token bridging logic
+  };
+
+  return (
+    <div className="token-bridge">
+      {/* Token bridge UI */}
+    </div>
+  );
+}`
+        }
+    },
+
+    'token-farming-protocol': {
+        title: 'Token Farming Protocol',
+        description: 'Advanced farming protocol with yield optimization, auto-compounding, and reward multipliers.',
+        category: 'Token',
+        price: '$389',
+        rating: 4.5,
+        reviews: 73,
+        audited: true,
+        features: ['Yield Optimization', 'Auto-compounding', 'Reward Multipliers', 'Pool Management'],
+        image: '🌾',
+        technicalSpecs: {
+            blockchain: 'Solana',
+            language: 'TypeScript, React',
+            framework: 'Next.js, Anchor',
+            smartContracts: ['Farming Contract', 'Reward Contract', 'Pool Contract'],
+            frontend: ['Farming Dashboard', 'Pool Manager', 'Reward Tracker'],
+            features: ['Token Farming', 'Yield Optimization', 'Auto-compounding', 'Reward Management']
+        },
+        codePreview: {
+            'Smart Contract': `// Token Farming Contract
+export class TokenFarming {
+  static async farmTokens(
+    ctx: web3.Context,
+    tokenAmount: number,
+    poolId: number,
+    compoundFrequency: number
+  ) {
+    const baseAPY = await this.getPoolAPY(poolId);
+    const compoundBonus = this.calculateCompoundBonus(compoundFrequency);
+    const effectiveAPY = baseAPY * compoundBonus;
+    
+    await this.createFarm(ctx.accounts.farm, {
+      amount: tokenAmount,
+      poolId,
+      apy: effectiveAPY,
+      compoundFrequency,
+      timestamp: Date.now()
+    });
+  }
+}`,
+            'Frontend Component': `// Token Farming Interface
+export default function TokenFarming() {
+  const handleFarmTokens = async (amount, poolId, compoundFrequency) => {
+    const farm = await createTokenFarm(amount, poolId, compoundFrequency);
+    // Token farming logic
+  };
+
+  return (
+    <div className="token-farming">
+      {/* Token farming UI */}
+    </div>
+  );
+}`
+        }
     }
 };
 
