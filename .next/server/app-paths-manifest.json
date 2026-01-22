@@ -1,7 +1,1 @@
-{
-  "/page": "app/page.js",
-  "/docs/page": "app/docs/page.js",
-  "/templates/page": "app/templates/page.js",
-  "/factory/page": "app/factory/page.js",
-  "/contact/page": "app/contact/page.js"
-}
+{}

@@ -14,7 +14,7 @@ const nextConfig = {
     NEXT_PUBLIC_SOLANA_RPC_URL: process.env.NEXT_PUBLIC_SOLANA_RPC_URL,
   },
 
-  webpack: (config, { isServer }) => {
+  webpack: (config, { isServer, dev }) => {
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
@@ -22,6 +22,15 @@ const nextConfig = {
         net: false,
         tls: false,
         crypto: false,
+      };
+    }
+
+    // Fix for EMFILE errors in development
+    if (dev) {
+      config.watchOptions = {
+        poll: 1000,
+        aggregateTimeout: 300,
+        ignored: /node_modules/,
       };
     }
 
