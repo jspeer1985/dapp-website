@@ -13,7 +13,7 @@ export interface TierInfo {
   securityLevel: string;
 }
 
-// Token-only pricing - TESTING PRICES ($0.01 - $0.10)
+// Token-only pricing - TESTING PRICES (0.001 SOL for all tiers)
 export function getTokenPrice(tier: Tier): { sol: number; usd: number } {
   const prices = {
     starter: {
@@ -21,19 +21,19 @@ export function getTokenPrice(tier: Tier): { sol: number; usd: number } {
       usd: 0.01,
     },
     professional: {
-      sol: 0.005, // ~$0.05
-      usd: 0.05,
+      sol: 0.001, // ~$0.01
+      usd: 0.01,
     },
     enterprise: {
-      sol: 0.01, // ~$0.10
-      usd: 0.10,
+      sol: 0.001, // ~$0.01
+      usd: 0.01,
     },
   };
 
   return prices[tier];
 }
 
-// dApp-only pricing - TESTING PRICES ($0.01 - $0.10)
+// dApp-only pricing - TESTING PRICES (0.001 SOL for all tiers)
 export function getDAppPrice(tier: Tier): { sol: number; usd: number } {
   const prices = {
     starter: {
@@ -41,31 +41,31 @@ export function getDAppPrice(tier: Tier): { sol: number; usd: number } {
       usd: 0.01,
     },
     professional: {
-      sol: 0.005, // ~$0.05
-      usd: 0.05,
+      sol: 0.001, // ~$0.01
+      usd: 0.01,
     },
     enterprise: {
-      sol: 0.01, // ~$0.10
-      usd: 0.10,
+      sol: 0.001, // ~$0.01
+      usd: 0.01,
     },
   };
 
   return prices[tier];
 }
 
-// Bundle pricing (token + dApp) - TESTING PRICES ($0.01 - $0.10)
+// Bundle pricing (token + dApp) - TESTING PRICES (0.001 SOL for all tiers)
 export function getBundlePrice(tokenTier: Tier, dappTier: Tier): { sol: number; usd: number } {
   const prices = {
     starter: 0.01,
-    professional: 0.05,
-    enterprise: 0.10,
+    professional: 0.01,
+    enterprise: 0.01,
   };
 
   const tier = dappTier === 'enterprise' || tokenTier === 'enterprise' ? 'enterprise' :
     dappTier === 'professional' || tokenTier === 'professional' ? 'professional' : 'starter';
 
   return {
-    sol: 0,
+    sol: 0.001, // 0.001 SOL for all tiers
     usd: prices[tier],
   };
 }
